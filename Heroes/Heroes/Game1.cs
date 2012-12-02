@@ -19,7 +19,7 @@ namespace Heroes
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        TileMap tileMap = new TileMap();
+        TileMap tileMap = new TileMap(new Game());
 
         public Game1()
         {
@@ -61,6 +61,10 @@ namespace Heroes
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Grass Block"));
+            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Stone Block"));
+            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Dirt Block"));
+            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Water Block"));
         }
 
         /// <summary>
@@ -84,6 +88,11 @@ namespace Heroes
                 this.Exit();
 
             // TODO: Add your update logic here
+            if (TouchPanel.IsGestureAvailable)
+            {
+                GestureSample gesture = TouchPanel.ReadGesture();
+                tileMap.MoveCamera(-gesture.Delta);
+            }
 
             base.Update(gameTime);
         }
@@ -97,6 +106,9 @@ namespace Heroes
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            tileMap.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

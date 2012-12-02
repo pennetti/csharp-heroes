@@ -22,7 +22,7 @@ namespace Heroes
         const int TILE_OFFSET = 87;
 
         const int DIRT_HEIGHT = 45;
-        const int DIRT_OFFSET = 13;
+        const int DIRT_OFFSET = 126;
 
         const int TILES_WIDE = 5;
         const int TILES_HIGH = 13;
@@ -36,6 +36,29 @@ namespace Heroes
         Vector2 CameraPosition = new Vector2((TILE_WIDTH ^ 2) / 2, TILE_HEIGHT);
 
         List<Texture2D> tileTextures = new List<Texture2D>();
+        List<Texture2D> tileObjectTextures = new List<Texture2D>();
+
+        int[,] map = new int[,]
+        {
+            {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
+            {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
+            {3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
+            {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
+        };
 
         public int MapWidth
         {
@@ -52,6 +75,11 @@ namespace Heroes
             tileTextures.Add(texture);
         }
 
+        public void AddDecalTexture(Texture2D texture)
+        {
+            tileObjectTextures.Add(texture);
+        }
+
         public void MoveCamera(Vector2 cameraDirection)
         {
             CameraPosition += cameraDirection;
@@ -61,7 +89,7 @@ namespace Heroes
             if (CameraPosition.Y < MARGIN_TOP)
                 CameraPosition.Y = MARGIN_TOP;
             if (CameraPosition.X > (MapWidth - TILES_WIDE) * TILE_WIDTH * MARGIN_RIGHT)
-                CameraPosition.X = (MapWidth - TILES_WIDE) * TILE_WIDTH * MARGIN_RIGHT;
+                CameraPosition.X = (MapWidth - TILES_WIDE) * TILE_WIDTH + 25;
             if (CameraPosition.Y > (MapHeight - TILES_HIGH) * TILE_HEIGHT - MARGIN_BOTTOM)
                 CameraPosition.Y = (MapHeight - TILES_HIGH) * TILE_HEIGHT - MARGIN_BOTTOM;
         }
@@ -88,6 +116,10 @@ namespace Heroes
                             new Rectangle(0, DIRT_OFFSET, TILE_WIDTH, DIRT_HEIGHT), Color.White);
                     else
                         batch.Draw(texture, new Rectangle(left, top2, TILE_WIDTH, TILE_HEIGHT), Color.White);
+
+                    var tileObjectIndex = tileObjects[y, x];
+                    batch.Draw(tileObject, new Rectangle(left, top2, TILE_WIDTH, TILE_HEIGHT), Color.White);
+
                 }
             }
         }
