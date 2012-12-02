@@ -65,6 +65,9 @@ namespace Heroes
             tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Stone Block"));
             tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Dirt Block"));
             tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Water Block"));
+
+            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Tree Tall"));
+            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Rock"));
         }
 
         /// <summary>

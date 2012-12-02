@@ -60,6 +60,28 @@ namespace Heroes
             {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
         };
 
+        int[,] tileObjects = 
+        {
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
+        };
+
         public int MapWidth
         {
             get {return map.GetLength(1); }
@@ -75,7 +97,7 @@ namespace Heroes
             tileTextures.Add(texture);
         }
 
-        public void AddDecalTexture(Texture2D texture)
+        public void AddTileObjectTexture(Texture2D texture)
         {
             tileObjectTextures.Add(texture);
         }
@@ -117,9 +139,12 @@ namespace Heroes
                     else
                         batch.Draw(texture, new Rectangle(left, top2, TILE_WIDTH, TILE_HEIGHT), Color.White);
 
-                    var tileObjectIndex = tileObjects[y, x];
-                    batch.Draw(tileObject, new Rectangle(left, top2, TILE_WIDTH, TILE_HEIGHT), Color.White);
 
+                    var tileObjectIndex = tileObjects[y, x];
+                    if (tileObjectIndex == -1) continue;
+
+                    var tileObject = tileObjectTextures[tileObjectIndex];
+                    batch.Draw(tileObject, new Rectangle(left, top2, TILE_WIDTH, TILE_HEIGHT), Color.White);
                 }
             }
         }
