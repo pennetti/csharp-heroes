@@ -19,11 +19,16 @@ namespace Heroes
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        TileMap tileMap = new TileMap();
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferWidth = tileMap.MapWidth * 101;
+            graphics.PreferredBackBufferHeight = tileMap.MapHeight * 171;
+            graphics.ApplyChanges();
 
             // Frame rate is 30 fps by default for Windows Phone.
             TargetElapsedTime = TimeSpan.FromTicks(333333);
@@ -41,6 +46,7 @@ namespace Heroes
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            TouchPanel.EnabledGestures = GestureType.FreeDrag;
 
             base.Initialize();
         }
