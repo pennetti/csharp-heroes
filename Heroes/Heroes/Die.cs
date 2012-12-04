@@ -9,6 +9,7 @@ namespace Heroes
     {
         private static Die instance = null;
         private Random rand;
+
         private Die()
         {
             rand = new Random();
