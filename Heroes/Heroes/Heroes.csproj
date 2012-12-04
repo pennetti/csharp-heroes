@@ -64,6 +64,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camera.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Tile.cs" />
     <Compile Include="TileMap.cs" />
     <Compile Include="TileObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

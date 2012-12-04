@@ -12,33 +12,18 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    /// <summary>
-    /// This is a game component that implements IUpdateable.
-    /// </summary>
     public class TileMap : Microsoft.Xna.Framework.GameComponent
     {
-        const int TILE_HEIGHT = 171;
-        const int TILE_WIDTH = 101;
-        const int TILE_OFFSET = 87;
+        public Camera _camera { get; set; }
+        
+        /*TODO: Allow for different map (level) sizes*/
+        Tile[,] _tiles = new Tile[18, 16];
+        TileObject[,] _tileObjects = new TileObject[18, 16];
 
-        const int DIRT_HEIGHT = 45;
-        const int DIRT_OFFSET = 126;
-
-        const int TILES_WIDE = 5;
-        const int TILES_HIGH = 13;
-
-        const int MARGIN_LEFT = 0;
-        const int MARGIN_RIGHT = 25;
-        const int MARGIN_TOP = 49;
-        const int MARGIN_BOTTOM = 93;
-
-        /*Paramter is the starting position of the camera.*/
-        Vector2 CameraPosition = new Vector2((TILE_WIDTH ^ 2) / 2, TILE_HEIGHT);
-
-        List<Texture2D> tileTextures = new List<Texture2D>();
-        List<Texture2D> tileObjectTextures = new List<Texture2D>();
-
-        int[,] map = new int[,]
+        List<Texture2D> _tileTextures = new List<Texture2D>();
+        List<Texture2D> _tileObjectTextures = new List<Texture2D>();
+        /*TODO: Create a map generator*/
+        int[,] textureMap = new int[18, 16]
         {
             {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
             {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
@@ -60,7 +45,7 @@ namespace Heroes
             {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
         };
 
-        int[,] tileObjects = 
+        int[,] objectsTextureMap = new int[18, 16]
         {
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -82,99 +67,99 @@ namespace Heroes
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
         };
 
-        public int MapWidth
-        {
-            get {return map.GetLength(1); }
-        }
-
-        public int MapHeight
-        {
-            get {return map.GetLength(0); }
-        }
-
-        public void AddTileTexture(Texture2D texture) 
-        {
-            tileTextures.Add(texture);
-        }
-
-        public void AddTileObjectTexture(Texture2D texture)
-        {
-            tileObjectTextures.Add(texture);
-        }
-
-        public void MoveCamera(Vector2 cameraDirection)
-        {
-            CameraPosition += cameraDirection;
-
-            if (CameraPosition.X < MARGIN_LEFT)
-                CameraPosition.X = MARGIN_LEFT;
-            if (CameraPosition.Y < MARGIN_TOP)
-                CameraPosition.Y = MARGIN_TOP;
-            if (CameraPosition.X > (MapWidth - TILES_WIDE) * TILE_WIDTH * MARGIN_RIGHT)
-                CameraPosition.X = (MapWidth - TILES_WIDE) * TILE_WIDTH + 25;
-            if (CameraPosition.Y > (MapHeight - TILES_HIGH) * TILE_HEIGHT - MARGIN_BOTTOM)
-                CameraPosition.Y = (MapHeight - TILES_HIGH) * TILE_HEIGHT - MARGIN_BOTTOM;
-        }
-
-        public void Draw(SpriteBatch batch)
-        {
-            for (var x = 0; x < MapWidth; x++)
-            {
-                for (var y = 0; y < MapHeight; y++)
-                {
-                    var left = x * TILE_WIDTH - (int)CameraPosition.X;
-                    var top = y * TILE_HEIGHT - (int)CameraPosition.Y;
-                    var top2 = y * (TILE_HEIGHT - TILE_OFFSET) - (int)CameraPosition.Y;
-
-                    /*Draw tiles*/
-                    var textureIndex = map[y, x];
-                    if (textureIndex == -1) continue;
-
-                    var texture = tileTextures[textureIndex];
-                    if (y == 0)
-                        batch.Draw(texture, new Rectangle(left, top, TILE_WIDTH, TILE_HEIGHT), Color.White);
-                    else if (textureIndex == 2) //Dirt
-                        batch.Draw(texture, new Rectangle(left, top2 + TILE_OFFSET, 101, 45),
-                            new Rectangle(0, DIRT_OFFSET, TILE_WIDTH, DIRT_HEIGHT), Color.White);
-                    else
-                        batch.Draw(texture, new Rectangle(left, top2, TILE_WIDTH, TILE_HEIGHT), Color.White);
-
-
-                    var tileObjectIndex = tileObjects[y, x];
-                    if (tileObjectIndex == -1) continue;
-
-                    var tileObject = tileObjectTextures[tileObjectIndex];
-                    batch.Draw(tileObject, new Rectangle(left, top2, TILE_WIDTH, TILE_HEIGHT), Color.White);
-                }
-            }
-        }
-
         public TileMap(Game game)
             : base(game)
         {
-            // TODO: Construct any child components here
+            _camera = new Camera(game, new Point((Constants.TILE_WIDTH ^ 2) / 2, Constants.TILE_HEIGHT), this);
+            Initialize();
         }
 
-        /// <summary>
-        /// Allows the game component to perform any initialization it needs to before starting
-        /// to run.  This is where it can query for any required services and load content.
-        /// </summary>
         public override void Initialize()
         {
-            // TODO: Add your initialization code here
-
             base.Initialize();
         }
 
-        /// <summary>
-        /// Allows the game component to update itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
             // TODO: Add your update code here
 
             base.Update(gameTime);
         }
+
+        public int MapWidth
+        {
+            get {return textureMap.GetLength(1); }
+        }
+        
+        public int MapHeight
+        {
+            get {return textureMap.GetLength(0); }
+        }
+
+        public void AddTileTexture(Texture2D texture)
+        {
+            _tileTextures.Add(texture);
+        }
+
+        public void AddTileObjectTexture(Texture2D texture)
+        {
+            _tileObjectTextures.Add(texture);
+        }
+
+        public void AddTilesAndTileObjects(int[,] tileTextureMap, int[,] tileObjectTextureMap) 
+        {
+            for (int x = 0; x < MapWidth; x++)
+            {
+                for (int y = 0; y < MapHeight; y++ )
+                {
+                    int tileTextureIndex = tileTextureMap[y, x];
+                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(y, x), _tileTextures[tileTextureIndex]);
+
+                    int tileObjectTextureIndex = tileObjectTextureMap[y, x];
+                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(y, x), _tileObjectTextures[tileObjectTextureIndex]);
+                    
+                    if (y - 1 >= 0)
+                        _tiles[y, x]._left = _tiles[y - 1, x];
+                    if (y + 1 < MapHeight)
+                        _tiles[y, x]._left = _tiles[y + 1, x];
+                    if (x - 1 >= 0)
+                        _tiles[y, x]._left = _tiles[y, x - 1];
+                    if (x + 1 < MapWidth)
+                        _tiles[y, x]._left = _tiles[y, x + 1];
+                }
+            }
+        }
+        
+        public void Draw(SpriteBatch batch)
+        {
+            this.AddTilesAndTileObjects(textureMap, objectsTextureMap);
+            for (var x = 0; x < MapWidth; x++)
+            {
+                for (var y = 0; y < MapHeight; y++)
+                {
+                    var left = x * Constants.TILE_WIDTH - (int)_camera._cameraPosition.X;
+                    var top = y * Constants.TILE_HEIGHT - (int)_camera._cameraPosition.Y;
+                    var top2 = y * (Constants.TILE_HEIGHT - Constants.TILE_OFFSET) - (int)_camera._cameraPosition.Y;
+
+                    /*Draw tiles*/
+                    if (_tiles[y, x] == null) continue;//DOES NOT ALLOW FOR TILE OBJECT WITHOUT TILE
+
+                    if (y == 0)
+                        batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), Color.White);
+                    else if (_tileTextures[2] == _tiles[y, x]._texture) //Dirt
+                        batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top2 + Constants.TILE_OFFSET, 101, 45),
+                            new Rectangle(0, Constants.DIRT_OFFSET, Constants.TILE_WIDTH, Constants.DIRT_HEIGHT), Color.White);
+                    else
+                        batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top2, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), Color.White);
+                    
+                    /*Draw tile objects*/
+                    if (_tiles[y, x]._tileObject == null) continue;
+
+                    batch.Draw(_tiles[y, x]._tileObject._texture, new Rectangle(left, top2, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), Color.White);
+                }
+            }
+        }
+
+
     }
 }
