@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    public class TileObject : Microsoft.Xna.Framework.GameComponent
+    public class TileObject : ObserverGameComponent
     {
         public Texture2D _texture { get; set; }
         public Point _location { get; set; }

@@ -58,6 +58,8 @@ namespace Heroes
 
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Tree Tall"));
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Rock"));
+            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Open Door"));
+            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Close Door"));
         }
 
         /// <summary>
