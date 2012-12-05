@@ -42,7 +42,7 @@ namespace Heroes
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            TouchPanel.EnabledGestures = GestureType.FreeDrag;
+            TouchPanel.EnabledGestures = GestureType.FreeDrag | GestureType.Tap;
 
             base.Initialize();
         }
@@ -73,6 +73,10 @@ namespace Heroes
             // TODO: Unload any non ContentManager content here
         }
 
+        //test variables (remove later)
+        public int curx = 3;
+        public int cury = 3;
+
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
@@ -83,7 +87,32 @@ namespace Heroes
             if (TouchPanel.IsGestureAvailable)
             {
                 GestureSample gesture = TouchPanel.ReadGesture();
-                tileMap._camera.MoveCamera(-gesture.Delta);
+
+                if (gesture.GestureType == GestureType.FreeDrag)
+                    tileMap._camera.MoveCamera(-gesture.Delta);
+
+                //can give you the tile instance that the user clicked on
+                if (gesture.GestureType == GestureType.Tap)
+                {
+                    int x = (int)tileMap._camera._cameraPosition.X + (int)gesture.Position.X - Constants.MARGIN_LEFT;
+                    int y = (int)tileMap._camera._cameraPosition.Y + (int)gesture.Position.Y - Constants.MARGIN_TOP;
+
+                    TileObject to = tileMap.GetTile(cury, curx)._tileObject;
+                    Tile t = tileMap.GetTile(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET));
+                    tileMap.MoveTileObject(to, t._location.X, t._location.Y);
+                    curx = t._location.X;
+                    cury = t._location.Y;
+
+                    System.Diagnostics.Debug.WriteLine("clicked");
+                    System.Diagnostics.Debug.WriteLine("camera x: " + (int)tileMap._camera._cameraPosition.X);
+                    System.Diagnostics.Debug.WriteLine("camera y: " + (int)tileMap._camera._cameraPosition.Y);
+                    System.Diagnostics.Debug.WriteLine("click x: " + (int)gesture.Position.X);
+                    System.Diagnostics.Debug.WriteLine("click y: " + (int)gesture.Position.Y);
+                    System.Diagnostics.Debug.WriteLine("x: " + x);
+                    System.Diagnostics.Debug.WriteLine("y: " + y);
+                    System.Diagnostics.Debug.WriteLine("target tile x: " + curx);
+                    System.Diagnostics.Debug.WriteLine("target tile y: " + cury);
+                }
             }
 
             base.Update(gameTime);

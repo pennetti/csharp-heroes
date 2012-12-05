@@ -86,6 +86,18 @@ namespace Heroes
             base.Update(gameTime);
         }
 
+        public Tile GetTile(int x, int y)
+        {
+            return _tiles[x, y];
+        }
+
+        public void MoveTileObject(TileObject tileobj, int x, int y)
+        {
+            int tileObjectTextureIndex = objectsTextureMap[tileobj._location.X, tileobj._location.Y];
+            objectsTextureMap[tileobj._location.X, tileobj._location.Y] = -1;
+            objectsTextureMap[y, x] = tileObjectTextureIndex;
+        }
+
         public int MapWidth
         {
             get {return textureMap.GetLength(1); }
