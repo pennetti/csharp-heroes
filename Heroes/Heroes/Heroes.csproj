@@ -65,6 +65,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TilesObjects\Actors\Actor.cs" />
+    <Compile Include="TilesObjects\Doorway.cs" />
+    <Compile Include="TilesObjects\Key.cs" />
+    <Compile Include="TilesObjects\Potion.cs" />
+    <Compile Include="TilesObjects\Weapon.cs" />
+    <Compile Include="TilesObjects\TreasureChest.cs" />
     <Compile Include="System\Camera.cs" />
     <Compile Include="System\Constants.cs" />
     <Compile Include="Die.cs" />
