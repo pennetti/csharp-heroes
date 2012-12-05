@@ -64,6 +64,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TextureMapFactory.cs" />
     <Compile Include="TilesObjects\Actors\Actor.cs" />
     <Compile Include="TilesObjects\Doorway.cs" />
     <Compile Include="TilesObjects\Key.cs" />
