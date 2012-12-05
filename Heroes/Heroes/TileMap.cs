@@ -95,7 +95,7 @@ namespace Heroes
         {
             int tileObjectTextureIndex = objectsTextureMap[tileobj._location.X, tileobj._location.Y];
             objectsTextureMap[tileobj._location.X, tileobj._location.Y] = -1;
-            objectsTextureMap[x, y] = tileObjectTextureIndex;
+            objectsTextureMap[y, x] = tileObjectTextureIndex;
         }
 
         public int MapWidth
