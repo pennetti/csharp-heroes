@@ -86,16 +86,16 @@ namespace Heroes
             base.Update(gameTime);
         }
 
-        public Tile GetTile(int x, int y)
+        public Tile GetTile(Point point)
         {
-            return _tiles[x, y];
+            return _tiles[point.X, point.Y];
         }
-
-        public void MoveTileObject(TileObject tileobj, int x, int y)
+        //Change parameter to Point
+        public void MoveTileObject(TileObject tileObject, Point point)
         {
-            int tileObjectTextureIndex = objectsTextureMap[tileobj._location.X, tileobj._location.Y];
-            objectsTextureMap[tileobj._location.X, tileobj._location.Y] = -1;
-            objectsTextureMap[y, x] = tileObjectTextureIndex;
+            int tileObjectTextureIndex = objectsTextureMap[tileObject._location.X, tileObject._location.Y];
+            objectsTextureMap[tileObject._location.X, tileObject._location.Y] = -1;
+            objectsTextureMap[point.Y, point.X] = tileObjectTextureIndex;
         }
 
         public int MapWidth
@@ -117,6 +117,39 @@ namespace Heroes
         {
             _tileObjectTextures.Add(texture);
         }
+        /*Seperate from Drawing TileObjects for efficiency, Where to call?*/
+        public void AddTiles(int[,] tileTextureMap)
+        {
+            for (int x = 0; x < MapWidth; x++)
+            {
+                for (int y = 0; y < MapHeight; y++)
+                {
+                    int tileTextureIndex = tileTextureMap[y, x];
+                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(y, x), _tileTextures[tileTextureIndex]);
+
+                    if (y - 1 >= 0)
+                        _tiles[y, x]._left = _tiles[y - 1, x];
+                    if (y + 1 < MapHeight)
+                        _tiles[y, x]._left = _tiles[y + 1, x];
+                    if (x - 1 >= 0)
+                        _tiles[y, x]._left = _tiles[y, x - 1];
+                    if (x + 1 < MapWidth)
+                        _tiles[y, x]._left = _tiles[y, x + 1];
+                }
+            }
+        }
+
+        public void AddTileObjects(int[,] tileObjectTextureMap)
+        {
+            for (int x = 0; x < MapWidth; x++)
+            {
+                for (int y = 0; y < MapHeight; y++)
+                {
+                    int tileObjectTextureIndex = tileObjectTextureMap[y, x];
+                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(y, x), _tileObjectTextures[tileObjectTextureIndex]);
+                }
+            }
+        }
 
         public void AddTilesAndTileObjects(int[,] tileTextureMap, int[,] tileObjectTextureMap) 
         {
@@ -127,6 +160,8 @@ namespace Heroes
                     int tileTextureIndex = tileTextureMap[y, x];
                     if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(y, x), _tileTextures[tileTextureIndex]);
 
+                    if (tileTextureIndex == 1) _tiles[y, x]._active = true;
+                    //For tiles that are stone, mark them as active, this will need better implementation to allow for different active textures
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
                     if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(y, x), _tileObjectTextures[tileObjectTextureIndex]);
                     
@@ -145,6 +180,7 @@ namespace Heroes
         public void Draw(SpriteBatch batch)
         {
             this.AddTilesAndTileObjects(textureMap, objectsTextureMap);
+
             for (var x = 0; x < MapWidth; x++)
             {
                 for (var y = 0; y < MapHeight; y++)

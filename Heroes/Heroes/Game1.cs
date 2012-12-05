@@ -30,6 +30,7 @@ namespace Heroes
 
             graphics.PreferredBackBufferWidth = tileMap.MapWidth * 101;
             graphics.PreferredBackBufferHeight = tileMap.MapHeight * 171;
+            graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             // Frame rate is 30 fps by default for Windows Phone.
@@ -96,10 +97,10 @@ namespace Heroes
                 {
                     int x = (int)tileMap._camera._cameraPosition.X + (int)gesture.Position.X - Constants.MARGIN_LEFT;
                     int y = (int)tileMap._camera._cameraPosition.Y + (int)gesture.Position.Y - Constants.MARGIN_TOP;
-
-                    TileObject to = tileMap.GetTile(cury, curx)._tileObject;
-                    Tile t = tileMap.GetTile(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET));
-                    tileMap.MoveTileObject(to, t._location.X, t._location.Y);
+                    //Change getTile to accept a Point
+                    TileObject to = tileMap.GetTile(new Point(cury, curx))._tileObject;
+                    Tile t = tileMap.GetTile(new Point(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET)));
+                    if (t._active) tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y));
                     curx = t._location.X;
                     cury = t._location.Y;
 
