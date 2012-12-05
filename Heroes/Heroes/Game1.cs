@@ -19,10 +19,12 @@ namespace Heroes
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        TileMap tileMap = new TileMap(new Game());
+        TileMap tileMap;
 
         public Game1()
         {
+            tileMap = new TileMap(this);
+
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
