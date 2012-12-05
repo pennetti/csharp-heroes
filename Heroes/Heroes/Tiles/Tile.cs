@@ -41,6 +41,7 @@ namespace Heroes
 
         public override void Initialize()
         {
+            _active = false;
             _top = null;
             _bottom = null;
             _left = null;
