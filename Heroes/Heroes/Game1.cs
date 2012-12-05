@@ -42,7 +42,7 @@ namespace Heroes
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            TouchPanel.EnabledGestures = GestureType.FreeDrag;
+            TouchPanel.EnabledGestures = GestureType.FreeDrag | GestureType.Hold;
 
             base.Initialize();
         }
@@ -83,7 +83,14 @@ namespace Heroes
             if (TouchPanel.IsGestureAvailable)
             {
                 GestureSample gesture = TouchPanel.ReadGesture();
-                tileMap._camera.MoveCamera(-gesture.Delta);
+
+                if (gesture.GestureType == GestureType.FreeDrag)
+                    tileMap._camera.MoveCamera(-gesture.Delta);
+
+                if (gesture.GestureType == GestureType.Hold)
+                {
+                    
+                }
             }
 
             base.Update(gameTime);
