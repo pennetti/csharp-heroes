@@ -86,9 +86,9 @@ namespace Heroes
             base.Update(gameTime);
         }
 
-        public Tile GetTile(int x, int y)
+        public Tile GetTile(int row, int col)
         {
-            return _tiles[x, y];
+            return _tiles[row, col];
         }
 
         public void MoveTileObject(TileObject tileobj, int x, int y)
@@ -96,6 +96,11 @@ namespace Heroes
             int tileObjectTextureIndex = objectsTextureMap[tileobj._location.X, tileobj._location.Y];
             objectsTextureMap[tileobj._location.X, tileobj._location.Y] = -1;
             objectsTextureMap[y, x] = tileObjectTextureIndex;
+        }
+
+        public List<Tile> GetAvailableTiles(Tile current, int roll)
+        {
+            return null;
         }
 
         public int MapWidth

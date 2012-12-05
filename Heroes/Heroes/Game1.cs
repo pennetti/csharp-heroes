@@ -102,16 +102,6 @@ namespace Heroes
                     tileMap.MoveTileObject(to, t._location.X, t._location.Y);
                     curx = t._location.X;
                     cury = t._location.Y;
-
-                    System.Diagnostics.Debug.WriteLine("clicked");
-                    System.Diagnostics.Debug.WriteLine("camera x: " + (int)tileMap._camera._cameraPosition.X);
-                    System.Diagnostics.Debug.WriteLine("camera y: " + (int)tileMap._camera._cameraPosition.Y);
-                    System.Diagnostics.Debug.WriteLine("click x: " + (int)gesture.Position.X);
-                    System.Diagnostics.Debug.WriteLine("click y: " + (int)gesture.Position.Y);
-                    System.Diagnostics.Debug.WriteLine("x: " + x);
-                    System.Diagnostics.Debug.WriteLine("y: " + y);
-                    System.Diagnostics.Debug.WriteLine("target tile x: " + curx);
-                    System.Diagnostics.Debug.WriteLine("target tile y: " + cury);
                 }
             }
 
