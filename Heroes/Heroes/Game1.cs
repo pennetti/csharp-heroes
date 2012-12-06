@@ -63,6 +63,8 @@ namespace Heroes
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Rock"));
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Open Door"));
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Closed Door"));
+
+            tileMap.AddPlayer(this);
         }
 
         /// <summary>
@@ -97,12 +99,10 @@ namespace Heroes
                 {
                     int x = (int)tileMap._camera._cameraPosition.X + (int)gesture.Position.X - Constants.MARGIN_LEFT;
                     int y = (int)tileMap._camera._cameraPosition.Y + (int)gesture.Position.Y - Constants.MARGIN_TOP;
-                    //Change getTile to accept a Point
                     TileObject to = tileMap.GetTile(new Point(curx, cury))._tileObject;
                     Tile t = tileMap.GetTile(new Point(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET)));
-                    if (t._active)
+                    if (tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y)))
                     {
-                        tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y));
                         curx = t._location.X;
                         cury = t._location.Y;
                     }

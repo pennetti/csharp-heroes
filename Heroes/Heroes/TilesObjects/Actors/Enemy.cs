@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Heroes
 {
-    class Enemy : Actor
+    public class Enemy : Actor
     {
         public bool _isLastBoss;
         public Enemy(Game game, Point location, Texture2D texture, int health, int attack, int defense, Boolean isLastBoss)

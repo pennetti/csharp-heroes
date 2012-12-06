@@ -16,6 +16,10 @@ namespace Heroes
     {
         public Camera _camera { get; set; }
 
+        public Point _startLocation { get; private set; }
+
+        public List<Player> _players { get; set; }
+
         /*TODO: Allow for different map (level) sizes*/
         Tile[,] _tiles = new Tile[18, 16];
         TileObject[,] _tileObjects = new TileObject[18, 16];
@@ -50,7 +54,7 @@ namespace Heroes
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -70,13 +74,22 @@ namespace Heroes
         public TileMap(Game game)
             : base(game)
         {
-            _camera = new Camera(game, new Point((Constants.TILE_WIDTH ^ 2) / 2, Constants.TILE_HEIGHT), this);
+            this._camera = new Camera(game, new Point((Constants.TILE_WIDTH ^ 2) / 2, Constants.TILE_HEIGHT), this);
             Initialize();
         }
 
         public override void Initialize()
         {
+            _players = new List<Player>();
+            this._startLocation = new Point(3, 3);
             base.Initialize();
+        }
+
+        public void AddPlayer(Game game)
+        {
+            //player is a rock for now
+            _players.Add(new Player(game, this._startLocation, this._tileObjectTextures[1], 100, 100, 100));
+            objectsTextureMap[this._startLocation.Y, this._startLocation.Y] = 1;
         }
 
         public override void Update(GameTime gameTime)
@@ -92,17 +105,24 @@ namespace Heroes
             int col = point.X;
             return _tiles[row, col];
         }
+
         //Change parameter to Point
-        public void MoveTileObject(TileObject tileObject, Point point)
+        public bool MoveTileObject(TileObject tileObject, Point point)
         {
             if (tileObject == null)
-                return;
+                return false;
+
+            if (!this.GetTile(point)._active)
+                return false;
 
             int tileObjectTextureIndex = objectsTextureMap[tileObject._location.Y, tileObject._location.X];
             objectsTextureMap[tileObject._location.Y, tileObject._location.X] = -1;
             objectsTextureMap[point.Y, point.X] = tileObjectTextureIndex;
+            tileObject._location = point;
+            tileObject._current = _tiles[point.Y, point.X];
+            return true;
         }
-
+        
         public int MapWidth
         {
             get { return textureMap.GetLength(1); }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Heroes
 {
-    abstract class Actor : TileObject
+    public abstract class Actor : TileObject
     {
         public int _health;
         public int _attack;
