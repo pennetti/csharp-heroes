@@ -88,13 +88,18 @@ namespace Heroes
 
         public Tile GetTile(Point point)
         {
-            return _tiles[point.X, point.Y];
+            int row = point.Y;
+            int col = point.X;
+            return _tiles[row, col];
         }
         //Change parameter to Point
         public void MoveTileObject(TileObject tileObject, Point point)
         {
-            int tileObjectTextureIndex = objectsTextureMap[tileObject._location.X, tileObject._location.Y];
-            objectsTextureMap[tileObject._location.X, tileObject._location.Y] = -1;
+            if (tileObject == null)
+                return;
+
+            int tileObjectTextureIndex = objectsTextureMap[tileObject._location.Y, tileObject._location.X];
+            objectsTextureMap[tileObject._location.Y, tileObject._location.X] = -1;
             objectsTextureMap[point.Y, point.X] = tileObjectTextureIndex;
         }
 
@@ -125,7 +130,7 @@ namespace Heroes
                 for (int y = 0; y < MapHeight; y++)
                 {
                     int tileTextureIndex = tileTextureMap[y, x];
-                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(y, x), _tileTextures[tileTextureIndex]);
+                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(x, y), _tileTextures[tileTextureIndex]);
 
                     if (y - 1 >= 0)
                         _tiles[y, x]._left = _tiles[y - 1, x];
@@ -146,7 +151,7 @@ namespace Heroes
                 for (int y = 0; y < MapHeight; y++)
                 {
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
-                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(y, x), _tileObjectTextures[tileObjectTextureIndex]);
+                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
                 }
             }
         }
@@ -158,12 +163,12 @@ namespace Heroes
                 for (int y = 0; y < MapHeight; y++)
                 {
                     int tileTextureIndex = tileTextureMap[y, x];
-                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(y, x), _tileTextures[tileTextureIndex]);
+                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(x, y), _tileTextures[tileTextureIndex]);
 
                     if (tileTextureIndex == 1) _tiles[y, x]._active = true;
                     //For tiles that are stone, mark them as active, this will need better implementation to allow for different active textures
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
-                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(y, x), _tileObjectTextures[tileObjectTextureIndex]);
+                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
 
                     if (y - 1 >= 0)
                         _tiles[y, x]._left = _tiles[y - 1, x];
