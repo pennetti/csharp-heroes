@@ -2,7 +2,13 @@ Content\Tiles\Dirt Block.xnb
 Content\Tiles\Grass Block.xnb
 Content\Tiles\Stone Block.xnb
 Content\Tiles\Water Block.xnb
-Content\TileObjects\Closed Door.xnb
-Content\TileObjects\Open Door.xnb
 Content\TileObjects\Rock.xnb
 Content\TileObjects\Tree Tall.xnb
+Content\TileObjects\Closed Door.xnb
+Content\TileObjects\Open Door.xnb
+Content\Dice\dice_five.xnb
+Content\Dice\dice_four.xnb
+Content\Dice\dice_one.xnb
+Content\Dice\dice_six.xnb
+Content\Dice\dice_three.xnb
+Content\Dice\dice_two.xnb

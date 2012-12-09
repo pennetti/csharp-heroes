@@ -33,7 +33,7 @@ namespace Heroes
             {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
             {3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
             {3, 3, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
+            {3, 3, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
             {3, 3, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 3, 3},
             {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
             {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
@@ -151,15 +151,20 @@ namespace Heroes
                 {
                     int tileTextureIndex = tileTextureMap[y, x];
                     if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(x, y), _tileTextures[tileTextureIndex]);
-
+                }
+            }
+            for (int x = 0; x < MapWidth; x++)
+            {
+                for (int y = 0; y < MapHeight; y++)
+                {
                     if (y - 1 >= 0)
-                        _tiles[y, x]._left = _tiles[y - 1, x];
+                        _tiles[y, x]._top = _tiles[y - 1, x];
                     if (y + 1 < MapHeight)
-                        _tiles[y, x]._left = _tiles[y + 1, x];
+                        _tiles[y, x]._bottom = _tiles[y + 1, x];
                     if (x - 1 >= 0)
                         _tiles[y, x]._left = _tiles[y, x - 1];
                     if (x + 1 < MapWidth)
-                        _tiles[y, x]._left = _tiles[y, x + 1];
+                        _tiles[y, x]._right = _tiles[y, x + 1];
                 }
             }
         }
@@ -189,15 +194,20 @@ namespace Heroes
                     //For tiles that are stone, mark them as active, this will need better implementation to allow for different active textures
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
                     if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
-
+                }
+            }
+            for (int x = 0; x < MapWidth; x++)
+            {
+                for (int y = 0; y < MapHeight; y++)
+                {
                     if (y - 1 >= 0)
-                        _tiles[y, x]._left = _tiles[y - 1, x];
+                        _tiles[y, x]._top = _tiles[y - 1, x];
                     if (y + 1 < MapHeight)
-                        _tiles[y, x]._left = _tiles[y + 1, x];
+                        _tiles[y, x]._bottom = _tiles[y + 1, x];
                     if (x - 1 >= 0)
                         _tiles[y, x]._left = _tiles[y, x - 1];
                     if (x + 1 < MapWidth)
-                        _tiles[y, x]._left = _tiles[y, x + 1];
+                        _tiles[y, x]._right = _tiles[y, x + 1];
                 }
             }
         }
