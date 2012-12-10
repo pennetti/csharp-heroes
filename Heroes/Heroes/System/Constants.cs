@@ -28,5 +28,10 @@ namespace Heroes
         public const int MARGIN_RIGHT = 25;
         public const int MARGIN_TOP = 49;
         public const int MARGIN_BOTTOM = 93;
+        
+        public enum GAME_STATE
+        {
+            Roll, FirstAction, Move, SecondAction, End
+        };
     }
 }

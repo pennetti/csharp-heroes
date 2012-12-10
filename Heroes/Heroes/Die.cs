@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Heroes
 {
-    class Die
+    public class Die
     {
-        private static Die instance = null;
+        public static Die instance;
         private Random rand;
 
         private Die()
@@ -15,7 +15,7 @@ namespace Heroes
             rand = new Random();
         }
 
-        public Die getInstance()
+        public static Die getInstance()
         {
             if (instance == null)
             {
@@ -26,7 +26,7 @@ namespace Heroes
 
         public int roll()
         {
-            return (int)Math.Ceiling(rand.NextDouble() * 6);
+            return (int)Math.Ceiling(rand.NextDouble() * 4);
         }
     }
 }
