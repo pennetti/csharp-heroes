@@ -8,7 +8,7 @@ namespace Heroes
 {
     public abstract class ObserverGameComponent : Microsoft.Xna.Framework.GameComponent
     {
-        public void receiveUpdate(String message, Object data)
+        public void receiveUpdate(Object message, Object data)
         {
             //Do Nothing
         }

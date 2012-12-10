@@ -19,7 +19,7 @@ namespace Heroes
         {
         }
 
-        public override void Initialize()
+       /* public override void Initialize()
         {
             base.Initialize();
         }
@@ -58,6 +58,6 @@ namespace Heroes
                 default:
                     return new TextureMap(game, null);
             }
-        }
+        }*/
     }
 }

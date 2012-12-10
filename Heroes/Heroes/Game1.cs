@@ -25,6 +25,7 @@ namespace Heroes
         double lastRollDisplayed;
         Texture2D currentDieTexture;
         List<Tuple<int, Tile>> moveableTiles;
+        int movesLeft;
         
         public Game1()
         {
@@ -50,7 +51,7 @@ namespace Heroes
             // TODO: Add your initialization logic here
             TouchPanel.EnabledGestures = GestureType.FreeDrag | GestureType.Tap;
             gameState = Constants.GAME_STATE.Roll;
-            lastRollDisplayed = 0;
+            movesLeft = 0;
             currentDieTexture = null;
             moveableTiles = new List<Tuple<int, Tile>>();
             base.Initialize();  
@@ -79,6 +80,7 @@ namespace Heroes
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_six"));
 
             tileMap.AddPlayer(this);
+            tileMap.LoadTiles();
         }
 
         /// <summary>
@@ -110,12 +112,12 @@ namespace Heroes
                         if (gesture.GestureType == GestureType.Tap)
                         {
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
-                            int roll = Die.getInstance().roll();
-                            currentDieTexture = diceTextures.ElementAt<Texture2D>(roll - 1);
+                            movesLeft = Die.getInstance().roll();
+                            currentDieTexture = diceTextures.ElementAt<Texture2D>(movesLeft - 1);
                             //Calculate moveable squares
-                            FindMoveableTiles(roll, true);
+                            Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(curx, cury));
+                            tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
                             gameState = Constants.GAME_STATE.Move;
-                            Console.WriteLine(moveableTiles.ToString());
                         }
                     }
                     break;
@@ -139,10 +141,19 @@ namespace Heroes
                             int y = (int)tileMap._camera._cameraPosition.Y + (int)gesture.Position.Y - Constants.MARGIN_TOP;
                             TileObject to = tileMap.GetTile(new Point(curx, cury))._tileObject;
                             Tile t = tileMap.GetTile(new Point(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET)));
+                            
                             if (tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y)))
                             {
+
+                                movesLeft -= (Math.Abs(curx - t._location.X) + Math.Abs(cury - t._location.Y));
                                 curx = t._location.X;
                                 cury = t._location.Y;
+                                Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(curx, cury));
+                                tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
+                                if (movesLeft == 0)
+                                {
+                                    gameState = Constants.GAME_STATE.Roll;
+                                }
                             }
                         }
                     }
@@ -197,66 +208,6 @@ namespace Heroes
             spriteBatch.End();
 
             base.Draw(gameTime);
-        }
-
-        private void FindMoveableTiles(int roll, bool start)
-        {
-            if (roll == 0)
-            {
-                return;
-            }
-            if (moveableTiles.Count() == 0)
-            {
-                Tile currTile = tileMap.GetTile(new Point(curx, cury));
-                moveableTiles.Add(new Tuple<int, Tile>(0, currTile));
-            }
-            List<Tuple<int, Tile>> newTiles = new List<Tuple<int, Tile>>();
-            foreach (Tuple<int, Tile> tile in moveableTiles)
-            {
-                if (tile._item2._left != null && tile._item2._left._active && !tileBeenAdded(tile._item2._left, newTiles))
-                {
-                    newTiles.Add(new Tuple<int, Tile>(tile._item1 + 1, tile._item2._left));
-                }
-                if (tile._item2._right != null && tile._item2._right._active && !tileBeenAdded(tile._item2._right, newTiles))
-                {
-                    newTiles.Add(new Tuple<int, Tile>(tile._item1 + 1, tile._item2._right));
-                }
-                if (tile._item2._bottom != null && tile._item2._bottom._active && !tileBeenAdded(tile._item2._bottom, newTiles))
-                {
-                    newTiles.Add(new Tuple<int, Tile>(tile._item1 + 1, tile._item2._bottom));
-                }
-                if (tile._item2._top != null && tile._item2._top._active && !tileBeenAdded(tile._item2._top, newTiles))
-                {
-                    newTiles.Add(new Tuple<int, Tile>(tile._item1 + 1, tile._item2._top));
-                }
-            }
-            moveableTiles.AddRange(newTiles);
-            FindMoveableTiles(roll - 1, false);
-            //As the list starts out empty, and each new moveable space is added to the end, the initial
-            //starting space will always be at the front of the list
-            if (start)
-            {
-                moveableTiles.RemoveAt(0);
-            }
-        }
-
-        private bool tileBeenAdded(Tile tileToCheck, List<Tuple<int, Tile>> newTiles)
-        {
-            foreach (Tuple<int, Tile> match in moveableTiles)
-            {
-                if (match._item2 == tileToCheck)
-                {
-                    return true;
-                }
-            }
-            foreach (Tuple<int, Tile> match in newTiles)
-            {
-                if (match._item2 == tileToCheck)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

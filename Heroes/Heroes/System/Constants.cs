@@ -33,5 +33,10 @@ namespace Heroes
         {
             Roll, FirstAction, Move, SecondAction, End
         };
+
+        public enum GAME_UPDATE
+        {
+            Roll, test2, test3
+        };
     }
 }

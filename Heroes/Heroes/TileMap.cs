@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    public class TileMap : Microsoft.Xna.Framework.GameComponent
+    public class TileMap : ObserverGameComponent
     {
         public Camera _camera { get; set; }
 
@@ -23,7 +23,9 @@ namespace Heroes
         /*TODO: Allow for different map (level) sizes*/
         Tile[,] _tiles = new Tile[18, 16];
         TileObject[,] _tileObjects = new TileObject[18, 16];
-
+        List<Tile> _inRangeTiles = new List<Tile>();
+        List<int> inRangeHash = new List<int>();
+        List<int> drawHash = new List<int>();
         List<Texture2D> _tileTextures = new List<Texture2D>();
         List<Texture2D> _tileObjectTextures = new List<Texture2D>();
         /*TODO: Create a map generator*/
@@ -115,11 +117,16 @@ namespace Heroes
             if (!this.GetTile(point)._active)
                 return false;
 
+            if (!_inRangeTiles.Contains(_tiles[point.Y, point.X]))
+                return false;
+
             int tileObjectTextureIndex = objectsTextureMap[tileObject._location.Y, tileObject._location.X];
             objectsTextureMap[tileObject._location.Y, tileObject._location.X] = -1;
             objectsTextureMap[point.Y, point.X] = tileObjectTextureIndex;
+            _tiles[tileObject._location.Y, tileObject._location.X]._tileObject = null;
             tileObject._location = point;
             tileObject._current = _tiles[point.Y, point.X];
+            _tiles[tileObject._location.Y, tileObject._location.X]._tileObject = tileObject;
             return true;
         }
         
@@ -181,6 +188,11 @@ namespace Heroes
             }
         }
 
+        public void LoadTiles()
+        {
+            this.AddTilesAndTileObjects(textureMap, objectsTextureMap);
+        }
+
         public void AddTilesAndTileObjects(int[,] tileTextureMap, int[,] tileObjectTextureMap)
         {
             for (int x = 0; x < MapWidth; x++)
@@ -214,26 +226,36 @@ namespace Heroes
 
         public void Draw(SpriteBatch batch)
         {
-            this.AddTilesAndTileObjects(textureMap, objectsTextureMap);
-
+            //this.AddTilesAndTileObjects(textureMap, objectsTextureMap);
+            Color shadeColor = Color.White;
             for (var x = 0; x < MapWidth; x++)
             {
                 for (var y = 0; y < MapHeight; y++)
                 {
+                    shadeColor = Color.White;
                     var left = x * Constants.TILE_WIDTH - (int)_camera._cameraPosition.X;
                     var top = y * Constants.TILE_HEIGHT - (int)_camera._cameraPosition.Y;
                     var top2 = y * (Constants.TILE_HEIGHT - Constants.TILE_OFFSET) - (int)_camera._cameraPosition.Y;
 
                     /*Draw tiles*/
                     if (_tiles[y, x] == null) continue;//DOES NOT ALLOW FOR TILE OBJECT WITHOUT TILE
-
+                    foreach (Tile highlightedTile in _inRangeTiles)
+                    {
+                        int drawHash = _tiles[y, x].GetHashCode();
+                        int availableHash = highlightedTile.GetHashCode();
+                        if (highlightedTile.GetHashCode() == _tiles[y, x].GetHashCode())
+                        {
+                            shadeColor = Color.Yellow;
+                            break;
+                        }
+                    }
                     if (y == 0)
-                        batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), Color.White);
+                        batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), shadeColor);
                     else if (_tileTextures[2] == _tiles[y, x]._texture) //Dirt
                         batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top2 + Constants.TILE_OFFSET, 101, 45),
-                            new Rectangle(0, Constants.DIRT_OFFSET, Constants.TILE_WIDTH, Constants.DIRT_HEIGHT), Color.White);
+                            new Rectangle(0, Constants.DIRT_OFFSET, Constants.TILE_WIDTH, Constants.DIRT_HEIGHT), shadeColor);
                     else
-                        batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top2, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), Color.White);
+                        batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top2, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), shadeColor);
 
                     /*Draw tile objects*/
                     if (_tiles[y, x]._tileObject == null) continue;
@@ -243,6 +265,84 @@ namespace Heroes
             }
         }
 
+        public void receiveUpdate(Constants.GAME_UPDATE message, Object data)
+        {
+            switch (message)
+            {
+                case Constants.GAME_UPDATE.Roll:
+                    Tuple<int, Point> bundle = data as Tuple<int, Point>;
+                    int roll = bundle._item1;
+                    Point startLoc = bundle._item2;
+                    _inRangeTiles.Clear();
+                    FindMoveableTiles(roll, startLoc, true);
+                    foreach (Tile tile in _inRangeTiles)
+                    {
+                        inRangeHash.Add(tile.GetHashCode());
+                    }
+                    Console.WriteLine();
+                    break;
+            }
+        }
 
+        private void FindMoveableTiles(int roll, Point loc, bool start)
+        {
+            if (roll == 0)
+            {
+                return;
+            }
+            if (_inRangeTiles.Count() == 0)
+            {
+
+                Tile currTile = GetTile(loc);
+                _inRangeTiles.Add(currTile);
+            }
+            List<Tile> newTiles = new List<Tile>();
+            foreach (Tile tile in _inRangeTiles)
+            {
+                if (tile != null && tile._left._active && !tileBeenAdded(tile._left, newTiles))
+                {
+                    newTiles.Add(tile._left);
+                }
+                if (tile != null && tile._right._active && !tileBeenAdded(tile._right, newTiles))
+                {
+                    newTiles.Add(tile._right);
+                }
+                if (tile != null && tile._bottom._active && !tileBeenAdded(tile._bottom, newTiles))
+                {
+                    newTiles.Add(tile._bottom);
+                }
+                if (tile != null && tile._top._active && !tileBeenAdded(tile._top, newTiles))
+                {
+                    newTiles.Add(tile._top);
+                }
+            }
+            _inRangeTiles.AddRange(newTiles);
+            FindMoveableTiles(roll - 1, loc, false);
+            //As the list starts out empty, and each new moveable space is added to the end, the initial
+            //starting space will always be at the front of the list
+            if (start)
+            {
+                _inRangeTiles.RemoveAt(0);
+            }
+        }
+
+        private bool tileBeenAdded(Tile tileToCheck, List<Tile> newTiles)
+        {
+            foreach (Tile match in _inRangeTiles)
+            {
+                if (match == tileToCheck)
+                {
+                    return true;
+                }
+            }
+            foreach (Tile match in newTiles)
+            {
+                if (match == tileToCheck)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
