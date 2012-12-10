@@ -114,6 +114,7 @@ namespace Heroes
             if (tileObject == null)
                 return false;
 
+            //also check here to make sure that there is no enemy or locked doorway or any other obstruction on that tile
             if (!this.GetTile(point)._active)
                 return false;
 
