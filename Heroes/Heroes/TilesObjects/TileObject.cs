@@ -12,28 +12,32 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    public class TileObject : ObserverGameComponent
+    public class TileObject : Observer
     {
         public Texture2D _texture { get; set; }
         public Point _location { get; set; }
         public Tile _current { get; set; }
 
-        public TileObject(Game game, Point location, Texture2D texture)
-            : base(game)
+        public TileObject(Point location, Texture2D texture)
         {
             _texture = texture;
             _location = location;
             Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
-            base.Initialize();
+            //base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
+            //base.Update(gameTime);
+        }
+
+        public void receiveUpdate(object message, object data)
+        {
+            //Do nothing
         }
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    public class Tile : Microsoft.Xna.Framework.GameComponent
+    public class Tile
     {
         public Texture2D _texture { get; set; }
         public Point _location { get; set; }
@@ -24,34 +24,31 @@ namespace Heroes
         public Tile _left { get; set; }
         public Tile _right { get; set; }
 
-        public Tile(Game game, Point location)
-            : base(game)
+        public Tile(Point location)
         {
             _location = location;
             Initialize();
         }
 
-        public Tile(Game game, Point location, Texture2D texture)
-            : base(game)
+        public Tile(Point location, Texture2D texture)
         {
             _texture = texture;
             _location = location;
             Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             _active = false;
             _top = null;
             _bottom = null;
             _left = null;
             _right = null;
-            base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
+            //base.Update(gameTime);
         }
 
         public Boolean HasTileObject()

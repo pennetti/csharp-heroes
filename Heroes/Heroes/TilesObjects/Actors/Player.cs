@@ -10,23 +10,27 @@ namespace Heroes
     public class Player : Actor
     {
         public List<Enemy> prisoners;
-        public Player(Game game, Point location, Texture2D texture, int health, int attack, int defense)
-            : base(game, location, texture, health, attack, defense)
+        public Player(Point location, Texture2D texture, int health, int attack, int defense)
+            : base(location, texture, health, attack, defense)
         {
             Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             prisoners = new List<Enemy>();
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }
 
+        public void Draw(SpriteBatch spriteBatch)
+        {
+
+        }
         /*public void receiveUpdate(String message, Object data)
         {
             switch (message)

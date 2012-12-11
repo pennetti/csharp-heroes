@@ -13,19 +13,19 @@ namespace Heroes
         public bool isBossKey { get; set; }
         public Doorway door { get; private set; }
 
-        public Key(Game game, Point location, Texture2D texture, Doorway door) : base(game, location, texture)
+        public Key(Point location, Texture2D texture, Doorway door) : base(location, texture)
         {
             this.door = door;
             this.Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             this.isBossKey = false;
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }

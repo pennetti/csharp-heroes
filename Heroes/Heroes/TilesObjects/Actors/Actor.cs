@@ -13,8 +13,8 @@ namespace Heroes
         public int _attack;
         public int _defense;
 
-        public Actor(Game game, Point location, Texture2D texture, int health, int attack, int defense)
-            : base(game, location, texture)
+        public Actor(Point location, Texture2D texture, int health, int attack, int defense)
+            : base(location, texture)
         {
             _health = health;
             _attack = attack;
@@ -22,12 +22,12 @@ namespace Heroes
             Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }

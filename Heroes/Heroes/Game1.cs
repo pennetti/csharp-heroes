@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Media;
 namespace Heroes
 {
     /// <summary>
-    /// This is the main type for your game
+    /// This is the main type for your gamez
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
@@ -24,7 +24,6 @@ namespace Heroes
         List<Texture2D> diceTextures = new List<Texture2D>();
         double lastRollDisplayed;
         Texture2D currentDieTexture;
-        List<Tuple<int, Tile>> moveableTiles;
         int movesLeft;
         
         public Game1()
@@ -53,7 +52,6 @@ namespace Heroes
             gameState = Constants.GAME_STATE.Roll;
             movesLeft = 0;
             currentDieTexture = null;
-            moveableTiles = new List<Tuple<int, Tile>>();
             base.Initialize();  
         }
 

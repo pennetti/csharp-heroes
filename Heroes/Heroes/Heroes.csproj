@@ -76,7 +76,7 @@
     <Compile Include="Die.cs" />
     <Compile Include="TilesObjects\Actors\Enemy.cs" />
     <Compile Include="Observable.cs" />
-    <Compile Include="ObserverGameComponent.cs" />
+    <Compile Include="Observer.cs" />
     <Compile Include="TextureMap.cs" />
     <Compile Include="TilesObjects\Actors\Player.cs" />
     <Compile Include="Tiles\Tile.cs" />

@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    public class TileMap : ObserverGameComponent
+    public class TileMap
     {
         public Camera _camera { get; set; }
 
@@ -74,31 +74,27 @@ namespace Heroes
         };
 
         public TileMap(Game game)
-            : base(game)
         {
             this._camera = new Camera(game, new Point((Constants.TILE_WIDTH ^ 2) / 2, Constants.TILE_HEIGHT), this);
             Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             _players = new List<Player>();
             this._startLocation = new Point(3, 3);
-            base.Initialize();
         }
 
         public void AddPlayer(Game game)
         {
             //player is a rock for now
-            _players.Add(new Player(game, this._startLocation, this._tileObjectTextures[1], 100, 100, 100));
+            _players.Add(new Player(this._startLocation, this._tileObjectTextures[1], 100, 100, 100));
             objectsTextureMap[this._startLocation.Y, this._startLocation.Y] = 1;
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            // TODO: Add your update code here
-
-            base.Update(gameTime);
+            //base.Update(gameTime);
         }
 
         public Tile GetTile(Point point)
@@ -158,7 +154,7 @@ namespace Heroes
                 for (int y = 0; y < MapHeight; y++)
                 {
                     int tileTextureIndex = tileTextureMap[y, x];
-                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(x, y), _tileTextures[tileTextureIndex]);
+                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(new Point(x, y), _tileTextures[tileTextureIndex]);
                 }
             }
             for (int x = 0; x < MapWidth; x++)
@@ -184,7 +180,7 @@ namespace Heroes
                 for (int y = 0; y < MapHeight; y++)
                 {
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
-                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
                 }
             }
         }
@@ -201,12 +197,12 @@ namespace Heroes
                 for (int y = 0; y < MapHeight; y++)
                 {
                     int tileTextureIndex = tileTextureMap[y, x];
-                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(this.Game, new Point(x, y), _tileTextures[tileTextureIndex]);
+                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(new Point(x, y), _tileTextures[tileTextureIndex]);
 
                     if (tileTextureIndex == 1) _tiles[y, x]._active = true;
                     //For tiles that are stone, mark them as active, this will need better implementation to allow for different active textures
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
-                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(this.Game, new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
                 }
             }
             for (int x = 0; x < MapWidth; x++)

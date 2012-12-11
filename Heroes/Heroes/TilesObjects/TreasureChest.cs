@@ -12,19 +12,19 @@ namespace Heroes
     {
         public bool _isBossChest { get; set; }
 
-        public TreasureChest(Game game, Point location, Texture2D texture) 
-            : base(game, location, texture)
+        public TreasureChest(Point location, Texture2D texture) 
+            : base(location, texture)
         {
             this.Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             this._isBossChest = false;
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }

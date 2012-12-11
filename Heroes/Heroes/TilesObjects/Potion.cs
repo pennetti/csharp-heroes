@@ -10,17 +10,17 @@ namespace Heroes
 {
     public class Potion : TileObject
     {
-        public Potion(Game game, Point location, Texture2D texture) : base(game, location, texture)
+        public Potion(Point location, Texture2D texture) : base(location, texture)
         {
             this.Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }

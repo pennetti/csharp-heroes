@@ -13,7 +13,7 @@ namespace Heroes
         public int defense { get; set; }
         public int price { get; set; }
 
-        public Weapon(Game game, Point location, Texture2D texture, int attack, int defense, int price) : base(game, location, texture)
+        public Weapon(Point location, Texture2D texture, int attack, int defense, int price) : base(location, texture)
         {
             this.attack = attack;
             this.defense = defense;
@@ -21,12 +21,12 @@ namespace Heroes
             this.Initialize();
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }
