@@ -12,21 +12,15 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    public class TextureMap : Microsoft.Xna.Framework.GameComponent
+    public class TextureMap
     {
         public int[,] _textureMap;
         public int[,] _objectTextureMap;
 
-        public TextureMap(Game game, int[,] textureMap, int[,] objectTextureMap)
-            : base(game)
+        public TextureMap(int[,] textureMap, int[,] objectTextureMap)
         {
             _textureMap = textureMap;
             _objectTextureMap = objectTextureMap;
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
         }
 
         public int TextureMapWidth

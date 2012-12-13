@@ -14,87 +14,36 @@ namespace Heroes
 {
     public class TileMap
     {
-        public Camera _camera { get; set; }
-
+        public Camera _camera { get; private set; }
         public Point _startLocation { get; private set; }
+        public List<Player> _players { get; private set; }
 
-        public List<Player> _players { get; set; }
-
-        /*TODO: Allow for different map (level) sizes*/
-        Tile[,] _tiles = new Tile[18, 16];
-        TileObject[,] _tileObjects = new TileObject[18, 16];
+        int[,] tileTextureMap;
+        int[,] tileObjectTextureMap;
+        Tile[,] _tiles;
+        TileObject[,] _tileObjects;
+        List<Texture2D> _tileTextures = new List<Texture2D>();
+        List<Texture2D> _tileObjectTextures = new List<Texture2D>();
         List<Tile> _inRangeTiles = new List<Tile>();
         List<int> inRangeHash = new List<int>();
         List<int> drawHash = new List<int>();
-        List<Texture2D> _tileTextures = new List<Texture2D>();
-        List<Texture2D> _tileObjectTextures = new List<Texture2D>();
-        /*TODO: Create a map generator*/
-        int[,] textureMap = new int[18, 16]
-        {
-            {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-            {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-            {3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 3, 3},
-            {3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3},
-            {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
-        };
 
-        int[,] objectsTextureMap = new int[18, 16]
+        public TileMap(TextureMap map, Point start)
         {
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
-        };
-
-        public TileMap(Game game)
-        {
-            this._camera = new Camera(game, new Point((Constants.TILE_WIDTH ^ 2) / 2, Constants.TILE_HEIGHT), this);
-            Initialize();
+            this.tileTextureMap = map._textureMap;
+            this.tileObjectTextureMap = map._objectTextureMap;
+            this._tiles = new Tile[this.MapHeight, this.MapWidth];
+            this._tileObjects = new TileObject[this.MapHeight, this.MapWidth];
+            this._startLocation = start;
+            this._camera = new Camera(this._startLocation, this);
+            this._players = new List<Player>();
         }
 
-        public void Initialize()
-        {
-            _players = new List<Player>();
-            this._startLocation = new Point(3, 3);
-        }
-
-        public void AddPlayer(Game game)
+        public void AddPlayer()
         {
             //player is a rock for now
             _players.Add(new Player(this._startLocation, this._tileObjectTextures[1], 100, 100, 100));
-            objectsTextureMap[this._startLocation.Y, this._startLocation.Y] = 1;
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            //base.Update(gameTime);
+            tileObjectTextureMap[this._startLocation.Y, this._startLocation.Y] = 1;
         }
 
         public Tile GetTile(Point point)
@@ -117,9 +66,9 @@ namespace Heroes
             if (!_inRangeTiles.Contains(_tiles[point.Y, point.X]))
                 return false;
 
-            int tileObjectTextureIndex = objectsTextureMap[tileObject._location.Y, tileObject._location.X];
-            objectsTextureMap[tileObject._location.Y, tileObject._location.X] = -1;
-            objectsTextureMap[point.Y, point.X] = tileObjectTextureIndex;
+            int tileObjectTextureIndex = tileObjectTextureMap[tileObject._location.Y, tileObject._location.X];
+            tileObjectTextureMap[tileObject._location.Y, tileObject._location.X] = -1;
+            tileObjectTextureMap[point.Y, point.X] = tileObjectTextureIndex;
             _tiles[tileObject._location.Y, tileObject._location.X]._tileObject = null;
             tileObject._location = point;
             tileObject._current = _tiles[point.Y, point.X];
@@ -129,12 +78,12 @@ namespace Heroes
         
         public int MapWidth
         {
-            get { return textureMap.GetLength(1); }
+            get { return tileTextureMap.GetLength(1); }
         }
 
         public int MapHeight
         {
-            get { return textureMap.GetLength(0); }
+            get { return tileTextureMap.GetLength(0); }
         }
 
         public void AddTileTexture(Texture2D texture)
@@ -146,48 +95,10 @@ namespace Heroes
         {
             _tileObjectTextures.Add(texture);
         }
-        /*Seperate from Drawing TileObjects for efficiency, Where to call?*/
-        public void AddTiles(int[,] tileTextureMap)
-        {
-            for (int x = 0; x < MapWidth; x++)
-            {
-                for (int y = 0; y < MapHeight; y++)
-                {
-                    int tileTextureIndex = tileTextureMap[y, x];
-                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(new Point(x, y), _tileTextures[tileTextureIndex]);
-                }
-            }
-            for (int x = 0; x < MapWidth; x++)
-            {
-                for (int y = 0; y < MapHeight; y++)
-                {
-                    if (y - 1 >= 0)
-                        _tiles[y, x]._top = _tiles[y - 1, x];
-                    if (y + 1 < MapHeight)
-                        _tiles[y, x]._bottom = _tiles[y + 1, x];
-                    if (x - 1 >= 0)
-                        _tiles[y, x]._left = _tiles[y, x - 1];
-                    if (x + 1 < MapWidth)
-                        _tiles[y, x]._right = _tiles[y, x + 1];
-                }
-            }
-        }
-
-        public void AddTileObjects(int[,] tileObjectTextureMap)
-        {
-            for (int x = 0; x < MapWidth; x++)
-            {
-                for (int y = 0; y < MapHeight; y++)
-                {
-                    int tileObjectTextureIndex = tileObjectTextureMap[y, x];
-                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
-                }
-            }
-        }
 
         public void LoadTiles()
         {
-            this.AddTilesAndTileObjects(textureMap, objectsTextureMap);
+            this.AddTilesAndTileObjects(tileTextureMap, tileObjectTextureMap);
         }
 
         public void AddTilesAndTileObjects(int[,] tileTextureMap, int[,] tileObjectTextureMap)
@@ -223,7 +134,7 @@ namespace Heroes
 
         public void Draw(SpriteBatch batch)
         {
-            //this.AddTilesAndTileObjects(textureMap, objectsTextureMap);
+            //this.AddTilesAndTileObjects(tileTextureMap, tileObjectTextureMap);
             Color shadeColor = Color.White;
             for (var x = 0; x < MapWidth; x++)
             {

@@ -12,29 +12,17 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Heroes
 {
-    public class Camera : Microsoft.Xna.Framework.GameComponent
+    public class Camera
     {
         public Vector2 _cameraPosition;
         public Point _location { get; set; }
         public TileMap _tileMap { get; set; }
 
-        public Camera(Game game, Point location, TileMap tileMap)
-            : base(game)
+        public Camera(Point location, TileMap tileMap)
         {
             _location = location;
             _tileMap = tileMap;
-            Initialize();
-        }
-
-        public override void Initialize()
-        {
             _cameraPosition = new Vector2(_location.X, _location.Y);
-            base.Initialize();
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
         }
 
         public void MoveCamera(Vector2 cameraDirection)

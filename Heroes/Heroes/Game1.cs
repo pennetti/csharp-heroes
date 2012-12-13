@@ -25,10 +25,13 @@ namespace Heroes
         double lastRollDisplayed;
         Texture2D currentDieTexture;
         int movesLeft;
+
+        public int currentX = 3;
+        public int currentY = 3;
         
         public Game1()
         {
-            tileMap = new TileMap(this);
+            tileMap = TileMapFactory.GetTileMapById(Constants.BOARD_1);
            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -77,7 +80,7 @@ namespace Heroes
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_five"));
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_six"));
 
-            tileMap.AddPlayer(this);
+            tileMap.AddPlayer();
             tileMap.LoadTiles();
         }
 
@@ -90,10 +93,6 @@ namespace Heroes
             // TODO: Unload any non ContentManager content here
         }
 
-        //test variables (remove later)
-        public int curx = 3;
-        public int cury = 3;
-
         protected override void Update(GameTime gameTime)
         {
             if (lastRollDisplayed > 0 && gameTime.TotalGameTime.TotalSeconds - lastRollDisplayed > 2)
@@ -101,19 +100,21 @@ namespace Heroes
                 lastRollDisplayed = 0;
                 currentDieTexture = null;
             }
+
             switch (gameState)
             {
                 case Constants.GAME_STATE.Roll:
                     if (TouchPanel.IsGestureAvailable)
                     {
                         GestureSample gesture = TouchPanel.ReadGesture();
+
                         if (gesture.GestureType == GestureType.Tap)
                         {
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
                             movesLeft = Die.getInstance().roll();
                             currentDieTexture = diceTextures.ElementAt<Texture2D>(movesLeft - 1);
                             //Calculate moveable squares
-                            Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(curx, cury));
+                            Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(currentX, currentY));
                             tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
                             gameState = Constants.GAME_STATE.Move;
                         }
@@ -132,21 +133,19 @@ namespace Heroes
                         if (gesture.GestureType == GestureType.FreeDrag)
                             tileMap._camera.MoveCamera(-gesture.Delta);
 
-                        //can give you the tile instance that the user clicked on
                         if (gesture.GestureType == GestureType.Tap)
                         {
                             int x = (int)tileMap._camera._cameraPosition.X + (int)gesture.Position.X - Constants.MARGIN_LEFT;
                             int y = (int)tileMap._camera._cameraPosition.Y + (int)gesture.Position.Y - Constants.MARGIN_TOP;
-                            TileObject to = tileMap.GetTile(new Point(curx, cury))._tileObject;
+                            TileObject to = tileMap.GetTile(new Point(currentX, currentY))._tileObject;
                             Tile t = tileMap.GetTile(new Point(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET)));
                             
                             if (tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y)))
                             {
-
-                                movesLeft -= (Math.Abs(curx - t._location.X) + Math.Abs(cury - t._location.Y));
-                                curx = t._location.X;
-                                cury = t._location.Y;
-                                Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(curx, cury));
+                                movesLeft -= (Math.Abs(currentX - t._location.X) + Math.Abs(currentY - t._location.Y));
+                                currentX = t._location.X;
+                                currentY = t._location.Y;
+                                Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(currentX, currentY));
                                 tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
                                 if (movesLeft == 0)
                                 {
@@ -166,29 +165,6 @@ namespace Heroes
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-             
-            // TODO: Add your update logic here
-            /*if (TouchPanel.IsGestureAvailable)
-            {
-                GestureSample gesture = TouchPanel.ReadGesture();
-
-                if (gesture.GestureType == GestureType.FreeDrag)
-                    tileMap._camera.MoveCamera(-gesture.Delta);
-
-                //can give you the tile instance that the user clicked on
-                if (gesture.GestureType == GestureType.Tap)
-                {
-                    int x = (int)tileMap._camera._cameraPosition.X + (int)gesture.Position.X - Constants.MARGIN_LEFT;
-                    int y = (int)tileMap._camera._cameraPosition.Y + (int)gesture.Position.Y - Constants.MARGIN_TOP;
-                    TileObject to = tileMap.GetTile(new Point(curx, cury))._tileObject;
-                    Tile t = tileMap.GetTile(new Point(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET)));
-                    if (tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y)))
-                    {
-                        curx = t._location.X;
-                        cury = t._location.Y;
-                    }
-                }
-            }*/
 
             base.Update(gameTime);
         }
