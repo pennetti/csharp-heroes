@@ -22,8 +22,11 @@ namespace Heroes
         int[,] tileObjectTextureMap;
         Tile[,] _tiles;
         TileObject[,] _tileObjects;
+
+        // should these be stored here?
         List<Texture2D> _tileTextures = new List<Texture2D>();
         List<Texture2D> _tileObjectTextures = new List<Texture2D>();
+
         List<Tile> _inRangeTiles = new List<Tile>();
         List<int> inRangeHash = new List<int>();
         List<int> drawHash = new List<int>();
@@ -53,7 +56,6 @@ namespace Heroes
             return _tiles[row, col];
         }
 
-        //Change parameter to Point
         public bool MoveTileObject(TileObject tileObject, Point point)
         {
             if (tileObject == null)
@@ -146,7 +148,8 @@ namespace Heroes
                     var top2 = y * (Constants.TILE_HEIGHT - Constants.TILE_OFFSET) - (int)_camera._cameraPosition.Y;
 
                     /*Draw tiles*/
-                    if (_tiles[y, x] == null) continue;//DOES NOT ALLOW FOR TILE OBJECT WITHOUT TILE
+                    if (_tiles[y, x] == null) continue; //DOES NOT ALLOW FOR TILE OBJECT WITHOUT TILE
+
                     foreach (Tile highlightedTile in _inRangeTiles)
                     {
                         int drawHash = _tiles[y, x].GetHashCode();

@@ -20,11 +20,13 @@ namespace Heroes
 
         public static TileMap GetTileMapById(int id)
         {
+            TextureMap textureMap;
+            TileMap tileMap;
 
             switch (id)
             {
                 case 1:
-                    TextureMap textureMap = new TextureMap(new int[18, 16]
+                    textureMap = new TextureMap(new int[18, 16]
                                                     {
                                                         {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
                                                         {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
@@ -67,8 +69,25 @@ namespace Heroes
                                                         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
                                                     });
 
-                    TileMap tileMap = new TileMap(textureMap, new Point(3, 3));
+                    tileMap = new TileMap(textureMap, new Point(3, 3));
                     return tileMap;
+
+                case 2:
+                    textureMap = new TextureMap(new int[2, 2]
+                                                    {
+                                                        {1, 1},
+                                                        {1, 1}
+                                                    },
+                                                    new int[2, 2]
+                                                    {
+                                                        {0, -1},
+                                                        {2, 3}
+                                                    });
+
+                    tileMap = new TileMap(textureMap, new Point(0, 0));
+                    return tileMap;
+
+
             }
             return null;
         }

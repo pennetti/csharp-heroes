@@ -26,12 +26,12 @@ namespace Heroes
         Texture2D currentDieTexture;
         int movesLeft;
 
-        public int currentX = 3;
-        public int currentY = 3;
+        public int currentX;
+        public int currentY;
         
         public Game1()
         {
-            tileMap = TileMapFactory.GetTileMapById(Constants.BOARD_1);
+            tileMap = TileMapFactory.GetTileMapById(1);
            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -52,6 +52,8 @@ namespace Heroes
         {
             // TODO: Add your initialization logic here
             TouchPanel.EnabledGestures = GestureType.FreeDrag | GestureType.Tap;
+            currentX = tileMap._startLocation.X;
+            currentY = tileMap._startLocation.Y;
             gameState = Constants.GAME_STATE.Roll;
             movesLeft = 0;
             currentDieTexture = null;
@@ -64,6 +66,7 @@ namespace Heroes
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            // this requires tilemap and tilemapfactory to know the indexes of each texture (change this?)
             tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Grass Block"));
             tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Stone Block"));
             tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Dirt Block"));
@@ -73,6 +76,7 @@ namespace Heroes
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Rock"));
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Open Door"));
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Closed Door"));
+
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_one"));
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_two"));
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_three"));
@@ -149,6 +153,7 @@ namespace Heroes
                                 tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
                                 if (movesLeft == 0)
                                 {
+                                    
                                     gameState = Constants.GAME_STATE.Roll;
                                 }
                             }
