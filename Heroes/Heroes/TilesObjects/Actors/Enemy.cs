@@ -19,7 +19,7 @@ namespace Heroes
 
         public void Initialize()
         {
-
+            _health = 1;
             base.Initialize();
         }
 

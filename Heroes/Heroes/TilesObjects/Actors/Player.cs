@@ -13,12 +13,15 @@ namespace Heroes
         public Player(Point location, Texture2D texture, int health, int attack, int defense)
             : base(location, texture, health, attack, defense)
         {
+
             Initialize();
         }
 
         public void Initialize()
         {
             prisoners = new List<Enemy>();
+            //Players start with 3 health
+            _health = 3;
             base.Initialize();
         }
 

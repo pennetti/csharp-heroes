@@ -200,12 +200,36 @@ namespace Heroes
 
                         if (gesture.GestureType == GestureType.Tap)
                         {
+                            Player player = (Player) current._tileObject;
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
                             enemyRoll = Die.getInstance().roll();
                             currentDieTexture = diceTextures.ElementAt<Texture2D>(enemyRoll - 1);
                             if (playerRoll > enemyRoll)
                             {
-                                tileMap.RemoveTileObject(engagedEnemy);
+                                engagedEnemy._health -= 1;
+                                if (engagedEnemy._health == 0)
+                                    tileMap.RemoveTileObject(engagedEnemy);
+                                if (movesLeft == 0)
+                                    gameState = Constants.GAME_STATE.Roll;
+                            }
+                            else if (playerRoll == enemyRoll)
+                            {
+                                engagedEnemy._health -= 1;
+                                if (engagedEnemy._health == 0)
+                                    tileMap.RemoveTileObject(engagedEnemy);
+                                player._health -= 1;
+                                //GAME OVER!
+                                if (player._health == 0)
+                                    tileMap.RemoveTileObject(player);
+                                if (movesLeft == 0)
+                                    gameState = Constants.GAME_STATE.Roll;
+                            }
+                            else
+                            {
+                                player._health -= 1;
+                                //GAME OVER!
+                                if (player._health == 0)
+                                    tileMap.RemoveTileObject(player);
                                 if (movesLeft == 0)
                                     gameState = Constants.GAME_STATE.Roll;
                             }
@@ -236,6 +260,26 @@ namespace Heroes
             if (currentDieTexture != null)
             {
                 spriteBatch.Draw(currentDieTexture, new Rectangle(30, 30, 150, 150), Color.White);
+            }
+            int playerHealth = ((Player)current._tileObject)._health;
+            if (playerHealth != 0)
+            {
+                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 30, 90);
+
+                Color[] data = new Color[30 * 90];
+                for (int j = 0; j < data.Length; ++j)
+                {
+                    data[j] = Color.Red;
+                }
+                rect.SetData(data);
+
+                for (int i = 0; i < playerHealth; i++)
+                {
+                    //spriteBatch.Draw(new Texture2D(GraphicsDevice, 1, 1), new Rectangle(30 + i * 30, 30, 75, 75), Color.Red);
+
+                    Vector2 coor = new Vector2(30 + i * 60, 30);
+                    spriteBatch.Draw(rect, coor, Color.White);
+                }
             }
             spriteBatch.End();
 
