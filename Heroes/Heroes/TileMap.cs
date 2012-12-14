@@ -17,7 +17,6 @@ namespace Heroes
         public Camera _camera { get; private set; }
         public Point _startLocation { get; private set; }
         public List<Player> _players { get; private set; }
-        public List<Enemy> _enemies { get; private set; }
 
         int[,] tileTextureMap;
         int[,] tileObjectTextureMap;
@@ -41,7 +40,6 @@ namespace Heroes
             this._startLocation = start;
             this._camera = new Camera(this._startLocation, this);
             this._players = new List<Player>();
-            this._enemies = new List<Enemy>();
         }
 
         public void AddPlayer()
@@ -50,11 +48,43 @@ namespace Heroes
             tileObjectTextureMap[this._startLocation.Y, this._startLocation.Y] = 4;
         }
 
+        public bool RemoveTileObject(TileObject tileObject)
+        {
+            if (tileObject != null)
+            {
+                tileObjectTextureMap[tileObject._location.Y, tileObject._location.X] = -1;
+                _tiles[tileObject._location.Y, tileObject._location.X]._tileObject = null;
+
+                if (tileTextureMap[tileObject._location.Y, tileObject._location.X] == 1)
+                    _tiles[tileObject._location.Y, tileObject._location.X]._active = true;
+                
+                return true;
+            }
+
+            return false;
+        }
+
+        public Enemy FindAdjacentEnemies(Tile tile)
+        {
+            if (tile._left != null && tile._left._tileObject is Enemy)
+                return tile._left._tileObject as Enemy;
+            if (tile._right != null && tile._right._tileObject is Enemy)
+                return tile._right._tileObject as Enemy;
+            if (tile._top != null && tile._top._tileObject is Enemy)
+                return tile._top._tileObject as Enemy;
+            if (tile._bottom != null && tile._bottom._tileObject is Enemy)
+                return tile._bottom._tileObject as Enemy;
+
+            return null;
+        }
+
         public Tile GetTile(Point point)
         {
             int row = point.Y;
             int col = point.X;
-            return _tiles[row, col];
+            if (row < MapWidth && col < MapHeight)
+                return _tiles[row, col];
+            return null;
         }
 
         public bool MoveTileObject(TileObject tileObject, Point point)
@@ -122,17 +152,15 @@ namespace Heroes
                         {
                             _tiles[y, x]._tileObject = _players[0];
                         }
-
                         //make tile inactive if the tile object is an enemy
-                        if (tileObjectTextureIndex == 5)
+                        else if (tileObjectTextureIndex == 5)
                         {
                             Enemy enemy = new Enemy(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex], 100, 100, 100, false);
-                            _enemies.Add(enemy);
                             _tiles[y, x]._tileObject = enemy;
                             _tiles[y, x]._active = false;
                         }
-
-                        _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                        else
+                            _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
                     }
                 }
             }
@@ -148,13 +176,6 @@ namespace Heroes
                         _tiles[y, x]._left = _tiles[y, x - 1];
                     if (x + 1 < MapWidth)
                         _tiles[y, x]._right = _tiles[y, x + 1];
-                    if (tileObjectTextureMap[y, x] == 5)
-                    {
-                        _tiles[y, x]._top._isBattleTile = true;
-                        _tiles[y, x]._right._isBattleTile = true;
-                        _tiles[y, x]._left._isBattleTile = true;
-                        _tiles[y, x]._bottom._isBattleTile = true;
-                    }
                 }
             }
         }
@@ -182,7 +203,7 @@ namespace Heroes
                         if (highlightedTile.GetHashCode() == _tiles[y, x].GetHashCode())
                         {
                             shadeColor = Color.Yellow;
-                            if (highlightedTile._isBattleTile)
+                            if (FindAdjacentEnemies(highlightedTile) != null)
                                 shadeColor = Color.Red;
                             break;
                         }

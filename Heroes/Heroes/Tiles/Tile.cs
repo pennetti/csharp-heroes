@@ -18,7 +18,6 @@ namespace Heroes
         public Point _location { get; set; }
         public TileObject _tileObject { get; set; }
         public bool _active { get; set; }
-        public bool _isBattleTile;
         //Initialize
         public Tile _top { get; set; }
         public Tile _bottom { get; set; }
@@ -41,7 +40,6 @@ namespace Heroes
         public void Initialize()
         {
             _active = false;
-            _isBattleTile = false;
             _top = null;
             _bottom = null;
             _left = null;

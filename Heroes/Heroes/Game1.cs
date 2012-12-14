@@ -26,6 +26,9 @@ namespace Heroes
         Texture2D currentDieTexture;
         int movesLeft;
         Tile current;
+        int playerRoll;
+        int enemyRoll;
+        Enemy engagedEnemy;
         
         public Game1()
         {
@@ -126,9 +129,28 @@ namespace Heroes
                     break;
 
                 case Constants.GAME_STATE.FirstAction:
+                    if (TouchPanel.IsGestureAvailable)
+                    {
+                        GestureSample gesture = TouchPanel.ReadGesture();
+
+                        if (gesture.GestureType == GestureType.Tap)
+                        {
+                            lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
+                            playerRoll = Die.getInstance().roll();
+                            currentDieTexture = diceTextures.ElementAt<Texture2D>(playerRoll - 1);
+                            gameState = Constants.GAME_STATE.SecondAction;
+
+                        }
+                    }
                     break;
 
                 case Constants.GAME_STATE.Move:
+                    engagedEnemy = tileMap.FindAdjacentEnemies(current);
+                    if (engagedEnemy != null)
+                    {
+                        gameState = Constants.GAME_STATE.FirstAction;
+                        break;
+                    }
 
                     if (TouchPanel.IsGestureAvailable)
                     {
@@ -150,6 +172,7 @@ namespace Heroes
                                 current = t;
                                 Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
                                 tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
+
                                 if (movesLeft == 0)
                                 {
                                     gameState = Constants.GAME_STATE.Roll;
@@ -160,6 +183,28 @@ namespace Heroes
                     break;
 
                 case Constants.GAME_STATE.SecondAction:
+                    if (TouchPanel.IsGestureAvailable)
+                    {
+                        GestureSample gesture = TouchPanel.ReadGesture();
+
+                        if (gesture.GestureType == GestureType.Tap)
+                        {
+                            lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
+                            enemyRoll = Die.getInstance().roll();
+                            currentDieTexture = diceTextures.ElementAt<Texture2D>(enemyRoll - 1);
+                            if (playerRoll > enemyRoll)
+                                tileMap.RemoveTileObject(engagedEnemy);
+
+                            if (movesLeft == 0)
+                                gameState = Constants.GAME_STATE.Roll;
+                            else
+                            {
+                                Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
+                                tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
+                                gameState = Constants.GAME_STATE.Move;
+                            }
+                        }
+                    }
                     break;
 
                 case Constants.GAME_STATE.End:
@@ -180,7 +225,7 @@ namespace Heroes
             tileMap.Draw(spriteBatch);
             if (currentDieTexture != null)
             {
-                spriteBatch.Draw(currentDieTexture, new Rectangle(75, 75, 300, 300), Color.White);
+                spriteBatch.Draw(currentDieTexture, new Rectangle(30, 30, 150, 150), Color.White);
             }
             spriteBatch.End();
 
