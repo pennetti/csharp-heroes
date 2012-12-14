@@ -111,6 +111,12 @@ namespace Heroes
             switch (gameState)
             {
                 case Constants.GAME_STATE.Roll:
+                    if (tileMap.IsBattleTile(current))
+                    {
+                        gameState = Constants.GAME_STATE.FirstAction;
+                        break;
+                    }
+
                     if (TouchPanel.IsGestureAvailable)
                     {
                         GestureSample gesture = TouchPanel.ReadGesture();
@@ -152,6 +158,9 @@ namespace Heroes
                         break;
                     }
 
+                    if (movesLeft == 0)
+                        gameState = Constants.GAME_STATE.Roll;
+
                     if (TouchPanel.IsGestureAvailable)
                     {
                         GestureSample gesture = TouchPanel.ReadGesture();
@@ -173,10 +182,12 @@ namespace Heroes
                                 Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
                                 tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
 
+                                if (tileMap.IsBattleTile(current))
+                                    break;
+
                                 if (movesLeft == 0)
-                                {
                                     gameState = Constants.GAME_STATE.Roll;
-                                }
+
                             }
                         }
                     }
@@ -193,16 +204,15 @@ namespace Heroes
                             enemyRoll = Die.getInstance().roll();
                             currentDieTexture = diceTextures.ElementAt<Texture2D>(enemyRoll - 1);
                             if (playerRoll > enemyRoll)
-                                tileMap.RemoveTileObject(engagedEnemy);
-
-                            if (movesLeft == 0)
-                                gameState = Constants.GAME_STATE.Roll;
-                            else
                             {
-                                Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
-                                tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
-                                gameState = Constants.GAME_STATE.Move;
+                                tileMap.RemoveTileObject(engagedEnemy);
+                                if (movesLeft == 0)
+                                    gameState = Constants.GAME_STATE.Roll;
                             }
+
+                            Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
+                            tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
+                            gameState = Constants.GAME_STATE.Move;
                         }
                     }
                     break;

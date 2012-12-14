@@ -78,6 +78,14 @@ namespace Heroes
             return null;
         }
 
+        public bool IsBattleTile(Tile tile)
+        {
+            if (FindAdjacentEnemies(tile) != null)
+                return true;
+
+            return false;
+        }
+
         public Tile GetTile(Point point)
         {
             int row = point.Y;
@@ -203,7 +211,7 @@ namespace Heroes
                         if (highlightedTile.GetHashCode() == _tiles[y, x].GetHashCode())
                         {
                             shadeColor = Color.Yellow;
-                            if (FindAdjacentEnemies(highlightedTile) != null)
+                            if (IsBattleTile(highlightedTile))
                                 shadeColor = Color.Red;
                             break;
                         }
