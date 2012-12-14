@@ -17,6 +17,7 @@ namespace Heroes
         public Camera _camera { get; private set; }
         public Point _startLocation { get; private set; }
         public List<Player> _players { get; private set; }
+        public List<Enemy> _enemies { get; private set; }
 
         int[,] tileTextureMap;
         int[,] tileObjectTextureMap;
@@ -40,6 +41,7 @@ namespace Heroes
             this._startLocation = start;
             this._camera = new Camera(this._startLocation, this);
             this._players = new List<Player>();
+            this._enemies = new List<Enemy>();
         }
 
         public void AddPlayer()
@@ -110,14 +112,27 @@ namespace Heroes
                 {
                     int tileTextureIndex = tileTextureMap[y, x];
                     if (tileTextureIndex != -1) _tiles[y, x] = new Tile(new Point(x, y), _tileTextures[tileTextureIndex]);
-
                     if (tileTextureIndex == 1) _tiles[y, x]._active = true;
                     //For tiles that are stone, mark them as active, this will need better implementation to allow for different active textures
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
                     if (tileObjectTextureIndex != -1)
                     {
+                        //these two conditionals probably shouldnt be here
+                        if (tileObjectTextureIndex == 4)
+                        {
+                            _tiles[y, x]._tileObject = _players[0];
+                        }
+
+                        //make tile inactive if the tile object is an enemy
+                        if (tileObjectTextureIndex == 5)
+                        {
+                            Enemy enemy = new Enemy(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex], 100, 100, 100, false);
+                            _enemies.Add(enemy);
+                            _tiles[y, x]._tileObject = enemy;
+                            _tiles[y, x]._active = false;
+                        }
+
                         _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
-                        //TODO: make tile inactive if the tile object is an enemy
                     }
                 }
             }
@@ -133,6 +148,13 @@ namespace Heroes
                         _tiles[y, x]._left = _tiles[y, x - 1];
                     if (x + 1 < MapWidth)
                         _tiles[y, x]._right = _tiles[y, x + 1];
+                    if (tileObjectTextureMap[y, x] == 5)
+                    {
+                        _tiles[y, x]._top._isBattleTile = true;
+                        _tiles[y, x]._right._isBattleTile = true;
+                        _tiles[y, x]._left._isBattleTile = true;
+                        _tiles[y, x]._bottom._isBattleTile = true;
+                    }
                 }
             }
         }
@@ -159,7 +181,9 @@ namespace Heroes
                         int availableHash = highlightedTile.GetHashCode();
                         if (highlightedTile.GetHashCode() == _tiles[y, x].GetHashCode())
                         {
-                            shadeColor = Color.Yellow; 
+                            shadeColor = Color.Yellow;
+                            if (highlightedTile._isBattleTile)
+                                shadeColor = Color.Red;
                             break;
                         }
                     }

@@ -144,12 +144,6 @@ namespace Heroes
                             TileObject to = current._tileObject;
                             Tile t = tileMap.GetTile(new Point(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET)));
                             
-                            bool hasTileObject;
-                            if (t._tileObject != null)
-                                hasTileObject = true;
-                            else
-                                hasTileObject = false;
-                            
                             if (tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y)))
                             {
                                 movesLeft -= (Math.Abs(current._location.X - t._location.X) + Math.Abs(current._location.Y - t._location.Y));
