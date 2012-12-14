@@ -25,9 +25,7 @@ namespace Heroes
         double lastRollDisplayed;
         Texture2D currentDieTexture;
         int movesLeft;
-
-        public int currentX;
-        public int currentY;
+        Tile current;
         
         public Game1()
         {
@@ -52,8 +50,6 @@ namespace Heroes
         {
             // TODO: Add your initialization logic here
             TouchPanel.EnabledGestures = GestureType.FreeDrag | GestureType.Tap;
-            currentX = tileMap._startLocation.X;
-            currentY = tileMap._startLocation.Y;
             gameState = Constants.GAME_STATE.Roll;
             movesLeft = 0;
             currentDieTexture = null;
@@ -76,6 +72,9 @@ namespace Heroes
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Rock"));
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Open Door"));
             tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Closed Door"));
+            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Player"));
+            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Enemy"));
+
 
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_one"));
             diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_two"));
@@ -86,6 +85,7 @@ namespace Heroes
 
             tileMap.AddPlayer();
             tileMap.LoadTiles();
+            current = tileMap.GetTile(tileMap._startLocation);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Heroes
                             movesLeft = Die.getInstance().roll();
                             currentDieTexture = diceTextures.ElementAt<Texture2D>(movesLeft - 1);
                             //Calculate moveable squares
-                            Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(currentX, currentY));
+                            Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
                             tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
                             gameState = Constants.GAME_STATE.Move;
                         }
@@ -141,19 +141,23 @@ namespace Heroes
                         {
                             int x = (int)tileMap._camera._cameraPosition.X + (int)gesture.Position.X - Constants.MARGIN_LEFT;
                             int y = (int)tileMap._camera._cameraPosition.Y + (int)gesture.Position.Y - Constants.MARGIN_TOP;
-                            TileObject to = tileMap.GetTile(new Point(currentX, currentY))._tileObject;
+                            TileObject to = current._tileObject;
                             Tile t = tileMap.GetTile(new Point(x / Constants.TILE_WIDTH, y / (Constants.TILE_HEIGHT - Constants.TILE_OFFSET)));
+                            
+                            bool hasTileObject;
+                            if (t._tileObject != null)
+                                hasTileObject = true;
+                            else
+                                hasTileObject = false;
                             
                             if (tileMap.MoveTileObject(to, new Point(t._location.X, t._location.Y)))
                             {
-                                movesLeft -= (Math.Abs(currentX - t._location.X) + Math.Abs(currentY - t._location.Y));
-                                currentX = t._location.X;
-                                currentY = t._location.Y;
-                                Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, new Point(currentX, currentY));
+                                movesLeft -= (Math.Abs(current._location.X - t._location.X) + Math.Abs(current._location.Y - t._location.Y));
+                                current = t;
+                                Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
                                 tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
                                 if (movesLeft == 0)
                                 {
-                                    
                                     gameState = Constants.GAME_STATE.Roll;
                                 }
                             }

@@ -44,9 +44,8 @@ namespace Heroes
 
         public void AddPlayer()
         {
-            //player is a rock for now
-            _players.Add(new Player(this._startLocation, this._tileObjectTextures[1], 100, 100, 100));
-            tileObjectTextureMap[this._startLocation.Y, this._startLocation.Y] = 1;
+            _players.Add(new Player(this._startLocation, this._tileObjectTextures[4], 100, 100, 100));
+            tileObjectTextureMap[this._startLocation.Y, this._startLocation.Y] = 4;
         }
 
         public Tile GetTile(Point point)
@@ -115,7 +114,11 @@ namespace Heroes
                     if (tileTextureIndex == 1) _tiles[y, x]._active = true;
                     //For tiles that are stone, mark them as active, this will need better implementation to allow for different active textures
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
-                    if (tileObjectTextureIndex != -1) _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                    if (tileObjectTextureIndex != -1)
+                    {
+                        _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                        //TODO: make tile inactive if the tile object is an enemy
+                    }
                 }
             }
             for (int x = 0; x < MapWidth; x++)
@@ -156,7 +159,7 @@ namespace Heroes
                         int availableHash = highlightedTile.GetHashCode();
                         if (highlightedTile.GetHashCode() == _tiles[y, x].GetHashCode())
                         {
-                            shadeColor = Color.Yellow;
+                            shadeColor = Color.Yellow; 
                             break;
                         }
                     }

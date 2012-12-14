@@ -12,3 +12,5 @@ Content\Dice\dice_one.xnb
 Content\Dice\dice_six.xnb
 Content\Dice\dice_three.xnb
 Content\Dice\dice_two.xnb
+Content\TileObjects\Enemy.xnb
+Content\TileObjects\Player.xnb
