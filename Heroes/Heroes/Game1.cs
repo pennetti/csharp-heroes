@@ -23,7 +23,8 @@ namespace Heroes
         Constants.GAME_STATE gameState;
         List<Texture2D> diceTextures = new List<Texture2D>();
         double lastRollDisplayed;
-        Texture2D currentDieTexture;
+        Texture2D playerDieTexture;
+        Texture2D enemyDieTexture;
         int movesLeft;
         Tile current;
         int playerRoll;
@@ -55,7 +56,8 @@ namespace Heroes
             TouchPanel.EnabledGestures = GestureType.FreeDrag | GestureType.Tap;
             gameState = Constants.GAME_STATE.Roll;
             movesLeft = 0;
-            currentDieTexture = null;
+            playerDieTexture = null;
+            enemyDieTexture = null;
             base.Initialize();  
         }
 
@@ -105,15 +107,15 @@ namespace Heroes
             if (lastRollDisplayed > 0 && gameTime.TotalGameTime.TotalSeconds - lastRollDisplayed > 2)
             {
                 lastRollDisplayed = 0;
-                currentDieTexture = null;
+                playerDieTexture = null;
+                enemyDieTexture = null;
             }
-
             switch (gameState)
             {
                 case Constants.GAME_STATE.Roll:
                     if (tileMap.IsBattleTile(current))
                     {
-                        gameState = Constants.GAME_STATE.FirstAction;
+                        gameState = Constants.GAME_STATE.SecondAction;
                         break;
                     }
 
@@ -125,7 +127,7 @@ namespace Heroes
                         {
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
                             movesLeft = Die.getInstance().roll();
-                            currentDieTexture = diceTextures.ElementAt<Texture2D>(movesLeft - 1);
+                            playerDieTexture = diceTextures.ElementAt<Texture2D>(movesLeft - 1);
                             //Calculate moveable squares
                             Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
                             tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
@@ -142,8 +144,6 @@ namespace Heroes
                         if (gesture.GestureType == GestureType.Tap)
                         {
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
-                            playerRoll = Die.getInstance().roll();
-                            currentDieTexture = diceTextures.ElementAt<Texture2D>(playerRoll - 1);
                             gameState = Constants.GAME_STATE.SecondAction;
 
                         }
@@ -154,7 +154,7 @@ namespace Heroes
                     engagedEnemy = tileMap.FindAdjacentEnemies(current);
                     if (engagedEnemy != null)
                     {
-                        gameState = Constants.GAME_STATE.FirstAction;
+                        gameState = Constants.GAME_STATE.SecondAction;
                         break;
                     }
 
@@ -202,8 +202,10 @@ namespace Heroes
                         {
                             Player player = (Player) current._tileObject;
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
+                            playerRoll = Die.getInstance().roll();
+                            playerDieTexture = diceTextures.ElementAt<Texture2D>(playerRoll - 1);
                             enemyRoll = Die.getInstance().roll();
-                            currentDieTexture = diceTextures.ElementAt<Texture2D>(enemyRoll - 1);
+                            enemyDieTexture = diceTextures.ElementAt<Texture2D>(enemyRoll - 1);
                             if (playerRoll > enemyRoll)
                             {
                                 engagedEnemy._health -= 1;
@@ -257,11 +259,19 @@ namespace Heroes
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             tileMap.Draw(spriteBatch);
-            if (currentDieTexture != null)
+            if (playerDieTexture != null)
             {
-                spriteBatch.Draw(currentDieTexture, new Rectangle(30, 30, 150, 150), Color.White);
+                spriteBatch.Draw(playerDieTexture, new Rectangle(30, 600, 150, 150), Color.White);
             }
-            int playerHealth = ((Player)current._tileObject)._health;
+            if (enemyDieTexture != null)
+            {
+                spriteBatch.Draw(enemyDieTexture, new Rectangle(300, 600, 150, 150), Color.White);
+            }
+            int playerHealth = 0;
+            if (current._tileObject != null)
+            {
+                playerHealth = ((Player)current._tileObject)._health;
+            }
             if (playerHealth != 0)
             {
                 Texture2D rect = new Texture2D(graphics.GraphicsDevice, 30, 90);
