@@ -130,7 +130,7 @@ namespace Heroes
                             playerDieTexture = diceTextures.ElementAt<Texture2D>(movesLeft - 1);
                             //Calculate moveable squares
                             Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
-                            tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
+                            tileMap.FindMoveableTiles(message);
                             gameState = Constants.GAME_STATE.Move;
                         }
                     }
@@ -180,7 +180,7 @@ namespace Heroes
                                 movesLeft -= (Math.Abs(current._location.X - t._location.X) + Math.Abs(current._location.Y - t._location.Y));
                                 current = t;
                                 Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
-                                tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
+                                tileMap.FindMoveableTiles(message);
 
                                 if (tileMap.IsBattleTile(current))
                                     break;
@@ -210,7 +210,11 @@ namespace Heroes
                             {
                                 engagedEnemy._health -= 1;
                                 if (engagedEnemy._health == 0)
+                                {
                                     tileMap.RemoveTileObject(engagedEnemy);
+                                    Tuple<TileObject, TileObject> bundle = new Tuple<TileObject, TileObject>(player, engagedEnemy);
+                                    tileMap.notifyObservers(Constants.GAME_UPDATE.Capture, bundle);
+                                }
                                 if (movesLeft == 0)
                                     gameState = Constants.GAME_STATE.Roll;
                             }
@@ -218,7 +222,11 @@ namespace Heroes
                             {
                                 engagedEnemy._health -= 1;
                                 if (engagedEnemy._health == 0)
+                                {
                                     tileMap.RemoveTileObject(engagedEnemy);
+                                    Tuple<TileObject, TileObject> bundle = new Tuple<TileObject, TileObject>(player, engagedEnemy);
+                                    tileMap.notifyObservers(Constants.GAME_UPDATE.Capture, bundle);
+                                }
                                 player._health -= 1;
                                 //GAME OVER!
                                 if (player._health == 0)
@@ -237,7 +245,7 @@ namespace Heroes
                             }
 
                             Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
-                            tileMap.receiveUpdate(Constants.GAME_UPDATE.Roll, message);
+                            tileMap.FindMoveableTiles(message);
                             gameState = Constants.GAME_STATE.Move;
                         }
                     }

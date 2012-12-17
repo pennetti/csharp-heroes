@@ -36,7 +36,7 @@ namespace Heroes
 
         public enum GAME_UPDATE
         {
-            Roll, Draw
+            Capture
         };
     }
 }

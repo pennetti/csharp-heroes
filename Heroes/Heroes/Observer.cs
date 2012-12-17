@@ -8,6 +8,6 @@ namespace Heroes
 {
     public interface Observer
     {
-        void receiveUpdate(Object message, Object data);
+        void receiveUpdate(Constants.GAME_UPDATE message, Object data);
     }
 }
