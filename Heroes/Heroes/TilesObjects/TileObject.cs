@@ -35,9 +35,23 @@ namespace Heroes
             //base.Update(gameTime);
         }
 
-        public void receiveUpdate(object message, object data)
+        public void receiveUpdate(Constants.GAME_UPDATE message, Object data)
         {
-            //Do nothing
+            switch (message)
+            {
+                case Constants.GAME_UPDATE.Capture:
+                    Tuple<TileObject, TileObject> bundle = data as Tuple<TileObject, TileObject>;
+                    if (bundle._item2.Equals(this))
+                    {
+                        _location = new Point();
+                        _current = null;
+                    }
+                    break;
+
+                default:
+                    break;
+
+            }
         }
     }
 }

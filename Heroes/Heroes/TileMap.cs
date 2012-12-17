@@ -22,7 +22,7 @@ namespace Heroes
         int[,] tileObjectTextureMap;
         Tile[,] _tiles;
         TileObject[,] _tileObjects;
-
+        List<TileObject> _observers;
         // should these be stored here?
         List<Texture2D> _tileTextures = new List<Texture2D>();
         List<Texture2D> _tileObjectTextures = new List<Texture2D>();
@@ -40,6 +40,7 @@ namespace Heroes
             this._startLocation = start;
             this._camera = new Camera(this._startLocation, this);
             this._players = new List<Player>();
+            this._observers = new List<TileObject>();
         }
 
         public void AddPlayer()
@@ -159,6 +160,7 @@ namespace Heroes
                         if (tileObjectTextureIndex == 4)
                         {
                             _tiles[y, x]._tileObject = _players[0];
+                            _observers.Add(_players[0]);
                         }
                         //make tile inactive if the tile object is an enemy
                         else if (tileObjectTextureIndex == 5)
@@ -166,9 +168,14 @@ namespace Heroes
                             Enemy enemy = new Enemy(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex], 100, 100, 100, false);
                             _tiles[y, x]._tileObject = enemy;
                             _tiles[y, x]._active = false;
+                            _observers.Add(enemy);
                         }
                         else
-                            _tiles[y, x]._tileObject = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                        {
+                            TileObject to = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                            _tiles[y, x]._tileObject = to;
+                            _observers.Add(to);
+                        }
                     }
                 }
             }
@@ -232,23 +239,27 @@ namespace Heroes
             }
         }
 
-        public void receiveUpdate(Constants.GAME_UPDATE message, Object data)
+        public void notifyObservers(Constants.GAME_UPDATE message, Object data)
         {
-            switch (message)
+            if (data == null)
             {
-                case Constants.GAME_UPDATE.Roll:
-                    Tuple<int, Point> bundle = data as Tuple<int, Point>;
-                    int roll = bundle._item1;
-                    Point startLoc = bundle._item2;
-                    _inRangeTiles.Clear();
-                    FindMoveableTiles(roll, startLoc, true);
-                    foreach (Tile tile in _inRangeTiles)
-                    {
-                        inRangeHash.Add(tile.GetHashCode());
-                    }
-                    Console.WriteLine();
-                    break;
+                return;
             }
+            foreach (TileObject observer in _observers)
+            {
+                observer.receiveUpdate(message, data);
+            }
+        }
+        public void FindMoveableTiles(Tuple<int, Point> bundle)
+        {
+            int roll = bundle._item1;
+            Point startLoc = bundle._item2;
+            _inRangeTiles.Clear();
+            FindMoveableTiles(roll, startLoc, true);
+            /*foreach (Tile tile in _inRangeTiles)
+            {
+                inRangeHash.Add(tile.GetHashCode());
+            }*/
         }
 
         private void FindMoveableTiles(int roll, Point loc, bool start)

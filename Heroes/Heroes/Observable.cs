@@ -19,7 +19,7 @@ namespace Heroes
         }
 
         //Might change String to an int later
-        public void notifyObservers(String message, Object data)
+        public void notifyObservers(Constants.GAME_UPDATE message, Object data)
         {
             foreach (Observer o in observers)
             {

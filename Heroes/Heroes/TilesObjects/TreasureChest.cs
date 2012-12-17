@@ -28,5 +28,18 @@ namespace Heroes
         {
             base.Update(gameTime);
         }
+
+        public void receiveUpdate(Constants.GAME_UPDATE message, Object data)
+        {
+            switch (message)
+            {
+                case Constants.GAME_UPDATE.Capture:
+                    break;
+
+                default:
+                    break;
+
+            }
+        }
     }
 }
