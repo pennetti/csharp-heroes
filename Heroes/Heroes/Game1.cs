@@ -21,7 +21,6 @@ namespace Heroes
         SpriteBatch spriteBatch;
         TileMap tileMap;
         Constants.GAME_STATE gameState;
-        List<Texture2D> diceTextures = new List<Texture2D>();
         double lastRollDisplayed;
         Texture2D playerDieTexture;
         Texture2D enemyDieTexture;
@@ -34,9 +33,10 @@ namespace Heroes
         public Game1()
         {
             tileMap = TileMapFactory.GetTileMapById(1);
-           
-            graphics = new GraphicsDeviceManager(this);
+
             Content.RootDirectory = "Content";
+
+            graphics = new GraphicsDeviceManager(this);
 
             graphics.PreferredBackBufferWidth = tileMap.MapWidth * 101;
             graphics.PreferredBackBufferHeight = tileMap.MapHeight * 171;
@@ -66,27 +66,24 @@ namespace Heroes
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            // this requires tilemap and tilemapfactory to know the indexes of each texture (change this?)
-            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Grass Block"));
-            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Stone Block"));
-            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Dirt Block"));
-            tileMap.AddTileTexture(Content.Load<Texture2D>("Tiles\\Water Block"));
+            Texture.AddTileTexture(Content.Load<Texture2D>("Tiles\\Grass Block"));
+            Texture.AddTileTexture(Content.Load<Texture2D>("Tiles\\Stone Block"));
+            Texture.AddTileTexture(Content.Load<Texture2D>("Tiles\\Dirt Block"));
+            Texture.AddTileTexture(Content.Load<Texture2D>("Tiles\\Water Block"));
 
-            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Tree Tall"));
-            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Rock"));
-            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Open Door"));
-            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Closed Door"));
-            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Player"));
-            tileMap.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Enemy"));
+            Texture.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Tree Tall"));
+            Texture.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Rock"));
+            Texture.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Open Door"));
+            Texture.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Closed Door"));
+            Texture.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Player"));
+            Texture.AddTileObjectTexture(Content.Load<Texture2D>("TileObjects\\Enemy"));
 
-
-            diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_one"));
-            diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_two"));
-            diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_three"));
-            diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_four"));
-            diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_five"));
-            diceTextures.Add(Content.Load<Texture2D>("Dice\\dice_six"));
+            Texture.AddDiceTexture(Content.Load<Texture2D>("Dice\\dice_one"));
+            Texture.AddDiceTexture(Content.Load<Texture2D>("Dice\\dice_two"));
+            Texture.AddDiceTexture(Content.Load<Texture2D>("Dice\\dice_three"));
+            Texture.AddDiceTexture(Content.Load<Texture2D>("Dice\\dice_four"));
+            Texture.AddDiceTexture(Content.Load<Texture2D>("Dice\\dice_five"));
+            Texture.AddDiceTexture(Content.Load<Texture2D>("Dice\\dice_six"));
 
             tileMap.AddPlayer();
             tileMap.LoadTiles();
@@ -127,7 +124,7 @@ namespace Heroes
                         {
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
                             movesLeft = Die.getInstance().roll();
-                            playerDieTexture = diceTextures.ElementAt<Texture2D>(movesLeft - 1);
+                            playerDieTexture = Texture.diceTextures.ElementAt<Texture2D>(movesLeft - 1);
                             //Calculate moveable squares
                             Tuple<int, Point> message = new Tuple<int, Point>(movesLeft, current._location);
                             tileMap.FindMoveableTiles(message);
@@ -203,9 +200,9 @@ namespace Heroes
                             Player player = (Player) current._tileObject;
                             lastRollDisplayed = gameTime.TotalGameTime.TotalSeconds;
                             playerRoll = Die.getInstance().roll();
-                            playerDieTexture = diceTextures.ElementAt<Texture2D>(playerRoll - 1);
+                            playerDieTexture = Texture.diceTextures.ElementAt<Texture2D>(playerRoll - 1);
                             enemyRoll = Die.getInstance().roll();
-                            enemyDieTexture = diceTextures.ElementAt<Texture2D>(enemyRoll - 1);
+                            enemyDieTexture = Texture.diceTextures.ElementAt<Texture2D>(enemyRoll - 1);
                             if (playerRoll > enemyRoll)
                             {
                                 engagedEnemy._health -= 1;

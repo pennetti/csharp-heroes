@@ -23,9 +23,6 @@ namespace Heroes
         Tile[,] _tiles;
         TileObject[,] _tileObjects;
         List<TileObject> _observers;
-        // should these be stored here?
-        List<Texture2D> _tileTextures = new List<Texture2D>();
-        List<Texture2D> _tileObjectTextures = new List<Texture2D>();
 
         List<Tile> _inRangeTiles = new List<Tile>();
         List<int> inRangeHash = new List<int>();
@@ -45,7 +42,7 @@ namespace Heroes
 
         public void AddPlayer()
         {
-            _players.Add(new Player(this._startLocation, this._tileObjectTextures[4], 100, 100, 100));
+            _players.Add(new Player(this._startLocation, Texture.tileObjectTextures[4], 100, 100, 100));
             tileObjectTextureMap[this._startLocation.Y, this._startLocation.Y] = 4;
         }
 
@@ -128,16 +125,6 @@ namespace Heroes
             get { return tileTextureMap.GetLength(0); }
         }
 
-        public void AddTileTexture(Texture2D texture)
-        {
-            _tileTextures.Add(texture);
-        }
-
-        public void AddTileObjectTexture(Texture2D texture)
-        {
-            _tileObjectTextures.Add(texture);
-        }
-
         public void LoadTiles()
         {
             this.AddTilesAndTileObjects(tileTextureMap, tileObjectTextureMap);
@@ -150,7 +137,7 @@ namespace Heroes
                 for (int y = 0; y < MapHeight; y++)
                 {
                     int tileTextureIndex = tileTextureMap[y, x];
-                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(new Point(x, y), _tileTextures[tileTextureIndex]);
+                    if (tileTextureIndex != -1) _tiles[y, x] = new Tile(new Point(x, y), Texture.tileTextures[tileTextureIndex]);
                     if (tileTextureIndex == 1) _tiles[y, x]._active = true;
                     //For tiles that are stone, mark them as active, this will need better implementation to allow for different active textures
                     int tileObjectTextureIndex = tileObjectTextureMap[y, x];
@@ -165,14 +152,14 @@ namespace Heroes
                         //make tile inactive if the tile object is an enemy
                         else if (tileObjectTextureIndex == 5)
                         {
-                            Enemy enemy = new Enemy(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex], 100, 100, 100, false);
+                            Enemy enemy = new Enemy(new Point(x, y), Texture.tileObjectTextures[tileObjectTextureIndex], 100, 100, 100, false);
                             _tiles[y, x]._tileObject = enemy;
                             _tiles[y, x]._active = false;
                             _observers.Add(enemy);
                         }
                         else
                         {
-                            TileObject to = new TileObject(new Point(x, y), _tileObjectTextures[tileObjectTextureIndex]);
+                            TileObject to = new TileObject(new Point(x, y), Texture.tileObjectTextures[tileObjectTextureIndex]);
                             _tiles[y, x]._tileObject = to;
                             _observers.Add(to);
                         }
@@ -225,7 +212,7 @@ namespace Heroes
                     }
                     if (y == 0)
                         batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top, Constants.TILE_WIDTH, Constants.TILE_HEIGHT), shadeColor);
-                    else if (_tileTextures[2] == _tiles[y, x]._texture) //Dirt
+                    else if (Texture.tileTextures[2] == _tiles[y, x]._texture) //Dirt
                         batch.Draw(_tiles[y, x]._texture, new Rectangle(left, top2 + Constants.TILE_OFFSET, 101, 45),
                             new Rectangle(0, Constants.DIRT_OFFSET, Constants.TILE_WIDTH, Constants.DIRT_HEIGHT), shadeColor);
                     else
